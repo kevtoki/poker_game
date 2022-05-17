@@ -1,13 +1,14 @@
 #ifndef CARD_H
 #define CARD_H
 
-enum Suit{spade, clubs, diamonds, hearts};
-enum Rank{ace, two, three, four, five, six, seven, eight, nine, ten, jack, queen, king};
-struct Card
+typedef enum {SPADE, CLUBS, DIAMONDS, HEARTS} Suit;
+typedef enum {ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING} Rank;
+
+typedef struct
 {
 	Suit suit;
 	Rank rank;
-}
+} Card;
 
 
 #endif
