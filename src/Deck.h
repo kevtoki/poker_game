@@ -21,4 +21,17 @@ struct DeckEntry {
 };
 
 
+DECK *CreateDeck();
+
+void DeleteDeck(DECK *deck);
+
+void FillDeck(DECK *deck);
+
+void ShuffleDeck(DECK *deck);
+
+void AppendEntry(Card *card);
+
+void RemoveEntry(int index);
+
+
 #endif
