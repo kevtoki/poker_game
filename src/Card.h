@@ -11,4 +11,9 @@ typedef struct
 } Card;
 
 
+
+Card *CreateCard(Suit suit, Rank rank);
+
+void DestroyCard(Card *card);
+
 #endif
