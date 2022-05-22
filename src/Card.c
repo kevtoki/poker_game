@@ -10,7 +10,8 @@ Card *CreateCard(Suit suit, Rank rank){
 	return card;
 }
 
-void DestroyCard(Card *card){
+void DeleteCard(Card *card){
+	free(card);
 
-
+	card = NULL;
 }

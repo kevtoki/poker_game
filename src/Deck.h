@@ -14,7 +14,7 @@ struct Deck {
 
 
 struct DeckEntry {
-	Card *card;
+	Card *Card;
 	DECK *Deck;
 	DENTRY *Next;
 	DENTRY *Prev;
@@ -29,9 +29,10 @@ void FillDeck(DECK *deck);
 
 void ShuffleDeck(DECK *deck);
 
-void AppendEntry(Card *card);
+void AppendEntry(DECK *deck, Card *card);
 
-void RemoveEntry(int index);
+void DeleteEntry(DECK *deck, int index);
+
 
 
 #endif

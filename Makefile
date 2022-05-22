@@ -30,11 +30,15 @@ $(COMPILE_PATH)Player.o: $(SOURCE_PATH)Player.c
 $(COMPILE_PATH)Game.o: $(SOURCE_PATH)Game.c
 	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)Game.c -o $(COMPILE_PATH)Game.o
 
+# Target for PlayerList.o
+$(COMPILE_PATH)PlayerList.o: $(SOURCE_PATH)PlayerList.c
+	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)PlayerList.c -o $(COMPILE_PATH)PlayerList.o
+
 
 ########## Generate the executable ########
 # Target for pkaces
-$(COMPILE_PATH)pkaces: $(COMPILE_PATH)pkaces.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o
-	$(OPTIONS) $(CFLAGS) $(COMPILE_PATH)pkaces.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o -o $(COMPILE_PATH)pkaces
+$(COMPILE_PATH)pkaces: $(COMPILE_PATH)pkaces.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o $(COMPILE_PATH)PlayerList.o
+	$(OPTIONS) $(CFLAGS) $(COMPILE_PATH)pkaces.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o $(COMPILE_PATH)PlayerList.o -o $(COMPILE_PATH)pkaces
 	make obj_clean
 
 
@@ -51,6 +55,7 @@ obj_clean:
 	rm -f $(COMPILE_PATH)Deck.o
 	rm -f $(COMPILE_PATH)Player.o
 	rm -f $(COMPILE_PATH)Game.o
+	rm -f $(COMPILE_PATH)PlayerList.o
 
 # Target for tar
 tar:
