@@ -8,6 +8,8 @@ Player *CreatePlayer(int id, TYPE type){
 
 	player->id = id;
 	player->type = type;
+	player->p_state = PLAYING;
+
 
 	player->deck = CreateDeck();
 
@@ -27,3 +29,5 @@ void DeletePlayer(Player *player){
 	free(player);
 	player = NULL;
 }
+
+

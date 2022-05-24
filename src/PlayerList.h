@@ -2,7 +2,6 @@
 #define PLAYERLIST_H
 #include "Player.h"
 
-
 typedef struct PlayerList PLIST;
 typedef struct PlayerEntry PENTRY;
 
@@ -11,6 +10,7 @@ typedef struct PlayerEntry PENTRY;
 struct PlayerList{
 	PENTRY *First;
 	PENTRY *Last;
+	Player *Dealer;
 	int Length;
 
 };

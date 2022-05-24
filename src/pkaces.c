@@ -4,6 +4,6 @@
 #include "Deck.h"
 
 int main(){
-
+	GameLoop();
 	return 0;
 }

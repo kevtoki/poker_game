@@ -10,6 +10,7 @@ PLIST *CreatePlayerList(){
 	pList->Length = 0;
 	pList->First = NULL;
 	pList->Last = NULL;
+	pList->Dealer = NULL;
 
 	return pList;
 }
@@ -23,6 +24,7 @@ void DeletePlayerList(PLIST *pList){
 
 	pList->Last = NULL;
 	pList->First = NULL;
+	pList->Dealer = NULL;
 
 	free(pList);
 }
@@ -51,6 +53,10 @@ void AppendPlayerEntry(PLIST *pList, Player *player){
 	}
 
 	pList->Last = pEntry;
+
+	if (player->type == DEALER){
+		pList->Dealer = player;
+	}
 }
 
 void DeletePlayerEntry(PLIST *pList, int index){

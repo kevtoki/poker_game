@@ -14,6 +14,8 @@ typedef struct
 
 Card *CreateCard(Suit suit, Rank rank);
 
+Card *CloneCard(Card *card);
+
 void DeleteCard(Card *card);
 
 #endif

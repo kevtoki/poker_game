@@ -29,10 +29,16 @@ void FillDeck(DECK *deck);
 
 void ShuffleDeck(DECK *deck);
 
-void AppendEntry(DECK *deck, Card *card);
+void EmptyDeck(DECK *deck);
 
-void DeleteEntry(DECK *deck, int index);
+void AppendDeckEntry(DECK *deck, Card *card);
 
+void DeleteDeckEntry(DECK *deck, int index);
 
+void SwapDeckEntryPositions(DECK *deck, int index1, int index2);
+
+Card *GetCard(DECK *deck, int index);
+
+void TransferCard(DECK *from, DECK *to, int index);
 
 #endif

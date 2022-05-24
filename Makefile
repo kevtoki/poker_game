@@ -1,4 +1,5 @@
 # Variables
+VERSION = Alpha
 SOURCE_PATH = ./src/
 COMPILE_PATH = ./bin/
 OPTIONS = gcc -Wall -std=c11
@@ -59,4 +60,8 @@ obj_clean:
 
 # Target for tar
 tar:
-	tar -czvf ../Poker_Alpha.tar.gz .
+	tar -czvf ../Poker_$(VERSION)_src.tar.gz .
+
+# Target for tar user
+tar_user:
+	tar --exclude='./src' --exclude='./doc/Poker_SoftwareSpec.pdf' --exclude='./Makefile' -czvf ../Poker_$(VERSION).tar.gz .

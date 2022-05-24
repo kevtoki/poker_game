@@ -10,6 +10,11 @@ Card *CreateCard(Suit suit, Rank rank){
 	return card;
 }
 
+Card *CloneCard(Card *card){
+	Card *clone = CreateCard(card->suit, card->rank);
+	return clone;
+}
+
 void DeleteCard(Card *card){
 	free(card);
 
