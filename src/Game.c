@@ -12,6 +12,8 @@ Game *CreateGame(){
 
 	game->boardCards = CreateDeck();
 
+	game->betPoints = 0;
+
 	return game;
 }
 
@@ -48,16 +50,111 @@ void GameLoop(){
 	AppendPlayerEntry(game->players, CreatePlayer(3, PLAYER));
 	AppendPlayerEntry(game->players, CreatePlayer(4, PLAYER));
 
+	GameRound(game);
+
+	DeleteGame(game);
+}
+
+
+void GameRound(Game *game){
+	FillDeck(game->players->Dealer->deck);
 
 	ShuffleDeck(game->players->Dealer->deck);
 	DealCards(game);
 	DealCards(game);
 
-	PrintPlayerData(game);
+	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
+	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
+	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
 
-	DeleteGame(game);
+	ProcessUserActions(game);
+
+	LastManStanding(game);
+
+	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
+
+	ProcessUserActions(game);
+
+	LastManStanding(game);
+
+	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
+
+	ProcessUserActions(game);
+
+	LastManStanding(game);
+
+	EvaluateHands(game);
+
+
+	PENTRY *pEntry = game->players->First;
+	for (int i = 0; i < game->players->Length; i++){
+		EmptyDeck(pEntry->Player->deck);
+		pEntry->Player->p_state = PLAYING;
+		pEntry = pEntry->Next;
+	}
+
+	EmptyDeck(game->boardCards);
 }
 
+
+int BetPoints(Game *game, Player *player, int points){
+	if (player->points < points){
+		return 0;
+	}
+
+	player->points -= points;
+
+	game->betPoints += points;
+
+	return 1;
+}
+
+
+void ProcessUserActions(Game *game){
+	PENTRY *pEntry = game->players->First;
+	for (int i = 0; i < game->players->Length; i++){
+		GetUserInput(game, pEntry->Player);
+		pEntry = pEntry->Next;
+	}
+}
+
+
+void GetUserInput(Game *game, Player *player){
+
+}
+
+
+Player *EvaluateHands(Game *game){
+
+
+
+
+	return NULL;
+}
+
+
+Player *LastManStanding(Game *game){
+	int playersIn = game->players->Length;
+	Player *playerIn;
+	PENTRY *pEntry = game->players->First;
+	for (int i = 0; i < game->players->Length; i++){
+		if (pEntry->Player->p_state == FOLDED){
+			playersIn--;
+		}
+		else {
+			playerIn = pEntry->Player;
+		}
+
+		pEntry = pEntry->Next;
+	}
+
+	if (playersIn == 1){
+		return playerIn;
+	}
+	else {
+		return NULL;
+	}
+}
 
 
 void PrintPlayerData(Game *game){

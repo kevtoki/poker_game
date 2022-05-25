@@ -10,13 +10,9 @@ Player *CreatePlayer(int id, TYPE type){
 	player->type = type;
 	player->p_state = PLAYING;
 
-
 	player->deck = CreateDeck();
 
-	if (type == DEALER){
-		FillDeck(player->deck);
-	}
-
+	player->points = 100;
 
 	return player;
 }

@@ -10,8 +10,10 @@ typedef enum {PLAYING, FOLDED} P_STATE;
 typedef struct {
 	int id;
 	TYPE type;
-	P_STATE *p_state;
+	P_STATE p_state;
 	DECK *deck;
+	int points;
+
 
 } Player;
 

@@ -33,7 +33,7 @@ void FillDeck(DECK *deck){
 }
 
 void ShuffleDeck(DECK *deck){
-	int shuffleDepth = 1000;
+	int shuffleDepth = 10000;
 	srand((unsigned) time(NULL));
 
 	for (int i = 0; i < shuffleDepth; i++){
