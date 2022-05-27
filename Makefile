@@ -7,13 +7,13 @@ CFLAGS = -g
 
 
 # Default Target
-.DEFAULT_GOAL := $(COMPILE_PATH)pkaces
+.DEFAULT_GOAL := server
 
 
 ########## Generate object files ##########
-# Target for pkaces.o
-$(COMPILE_PATH)pkaces.o: $(SOURCE_PATH)pkaces.c
-	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)pkaces.c -o $(COMPILE_PATH)pkaces.o
+# Target for pkaces_server.o
+$(COMPILE_PATH)pkaces_server.o: $(SOURCE_PATH)pkaces_server.c
+	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)pkaces_server.c -o $(COMPILE_PATH)pkaces_server.o
 
 # Target for Card.o
 $(COMPILE_PATH)Card.o: $(SOURCE_PATH)Card.c
@@ -35,11 +35,28 @@ $(COMPILE_PATH)Game.o: $(SOURCE_PATH)Game.c
 $(COMPILE_PATH)PlayerList.o: $(SOURCE_PATH)PlayerList.c
 	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)PlayerList.c -o $(COMPILE_PATH)PlayerList.o
 
+# Target for Server.o
+$(COMPILE_PATH)Server.o: $(SOURCE_PATH)Server.c
+	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)Server.c -o $(COMPILE_PATH)Server.o
+
+# Target for Client.o
+$(COMPILE_PATH)Client.o: $(SOURCE_PATH)Client.c
+	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)Client.c -o $(COMPILE_PATH)Client.o
+
+# Target for pkaces_client.o
+$(COMPILE_PATH)pkaces_client.o: $(SOURCE_PATH)pkaces_client.c
+	$(OPTIONS) $(CFLAGS) -c $(SOURCE_PATH)pkaces_client.c -o $(COMPILE_PATH)pkaces_client.o
+
 
 ########## Generate the executable ########
-# Target for pkaces
-$(COMPILE_PATH)pkaces: $(COMPILE_PATH)pkaces.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o $(COMPILE_PATH)PlayerList.o
-	$(OPTIONS) $(CFLAGS) $(COMPILE_PATH)pkaces.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o $(COMPILE_PATH)PlayerList.o -o $(COMPILE_PATH)pkaces
+# Target for pkaces_server
+server: $(COMPILE_PATH)pkaces_server.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o $(COMPILE_PATH)PlayerList.o $(COMPILE_PATH)Server.o
+	$(OPTIONS) $(CFLAGS) $(COMPILE_PATH)pkaces_server.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o $(COMPILE_PATH)Player.o $(COMPILE_PATH)Game.o $(COMPILE_PATH)PlayerList.o $(COMPILE_PATH)Server.o -o $(COMPILE_PATH)pkaces_server
+	make obj_clean
+
+# Target for pkaces_client
+client: $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o
+	$(OPTIONS) $(CFLAGS) $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o -o $(COMPILE_PATH)pkaces_client
 	make obj_clean
 
 
@@ -47,16 +64,19 @@ $(COMPILE_PATH)pkaces: $(COMPILE_PATH)pkaces.o $(COMPILE_PATH)Card.o $(COMPILE_P
 # Target for clean up
 clean:
 	make obj_clean
-	rm -f $(COMPILE_PATH)pkaces
+	rm -f $(COMPILE_PATH)pkaces_server
 
 # Target for object file clean up
 obj_clean:
-	rm -f $(COMPILE_PATH)pkaces.o
+	rm -f $(COMPILE_PATH)pkaces_server.o
+	rm -f $(COMPILE_PATH)pkaces_client.o
 	rm -f $(COMPILE_PATH)Card.o
 	rm -f $(COMPILE_PATH)Deck.o
 	rm -f $(COMPILE_PATH)Player.o
 	rm -f $(COMPILE_PATH)Game.o
 	rm -f $(COMPILE_PATH)PlayerList.o
+	rm -f $(COMPILE_PATH)Server.o
+	rm -f $(COMPILE_PATH)Client.o
 
 # Target for tar
 tar:

@@ -113,14 +113,39 @@ int BetPoints(Game *game, Player *player, int points){
 void ProcessUserActions(Game *game){
 	PENTRY *pEntry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
-		GetUserInput(game, pEntry->Player);
+		if (pEntry->Player->type != DEALER){
+			GetUserInput(game, pEntry->Player);
+		}
+
 		pEntry = pEntry->Next;
 	}
 }
 
 
 void GetUserInput(Game *game, Player *player){
+	int input = 0;
+	while (1){
+		printf("What action do you want to take?\n\n");
+		printf("1 - Call\n");
+		printf("2 - Raise\n");
+		printf("3 - Fold\n");
 
+		printf("Enter action here (1-3): ");
+		scanf("%d", &input);
+
+		if (input == 1){
+			BetPoints(game, player, 0);
+			return;
+		}
+		else if (input == 2){
+			BetPoints(game, player, 0);
+			return;
+		}
+		else if (input == 3){
+			player->p_state = FOLDED;
+			return;
+		}
+	}
 }
 
 
