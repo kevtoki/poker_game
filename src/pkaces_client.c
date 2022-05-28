@@ -5,12 +5,8 @@
 
 int main(){
 
-	ServerConnection *conn = CreateServerConnection("crystalcove.eecs.uci.edu", 10190);
+	ServerConnection *conn = ConnectToServer("crystalcove.eecs.uci.edu", 10190);
 
-	char msg[256];
-	scanf("%s", msg);
-
-	WriteServerConnection(conn, msg);
 	DeleteServerConnection(conn);
 	return 0;
 }

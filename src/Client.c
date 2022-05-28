@@ -42,6 +42,7 @@ ServerConnection *ConnectToServer(const char *hostname, int startingPort){
 		conn = CreateServerConnection(hostname, startingPort + i);
 
 		if (conn != NULL){
+			printf("Successfully connected to %s on port %d", hostname, startingPort + i);
 			return conn;
 		}
 	}
