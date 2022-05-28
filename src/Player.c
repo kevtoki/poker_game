@@ -19,6 +19,8 @@ Player *CreatePlayer(int id, TYPE type){
 }
 
 
+
+
 void BindPlayerConnection(Player *player, Connection *conn){
 	player->connection = conn;
 

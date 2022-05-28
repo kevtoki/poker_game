@@ -104,3 +104,18 @@ void DeletePlayerEntry(PLIST *pList, int index){
 
 	pList->Length--;
 }
+
+
+PENTRY *GetPlayerEntry(PLIST *pList, int index){
+	PENTRY *entry = pList->First;
+
+	if (index < 0 || index >= pList->Length){
+		return NULL;
+	}
+
+	for (int i = 0; i < index; i++){
+		entry = entry->Next;
+	}
+
+	return entry;
+}

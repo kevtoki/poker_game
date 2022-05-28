@@ -20,7 +20,7 @@ void DeleteGame(Game *game);
 
 void DealCards(Game *game);
 
-void InitializeGameConnections(Game *game);
+void InitializeGameConnections(Game *game, int activeConnections);
 
 void GameLoop();
 

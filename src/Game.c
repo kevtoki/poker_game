@@ -42,23 +42,25 @@ void DealCards(Game *game){
 }
 
 
-void InitializeGameConnections(Game *game){
+void InitializeGameConnections(Game *game, int activeConnections){
+	for (int i = 0; i < activeConnections; i++){
+		printf("Creating and opening connection on port %d\n", 10190 + i);
+		Connection *conn = CreateConnection(10190 + i);
+		OpenConnection(conn);
+		Player *player = CreatePlayer(i, PLAYER);
+		BindPlayerConnection(player, conn);
+		AppendPlayerEntry(game->players, player);
 
+		printf("Player registered on port %d with id %d\n", 10190 + i, i);
+	}
 
 }
 
 
-void GameLoop(){
+void GameLoop(int playerCount){
 	Game *game = CreateGame();
 
-
-	InitializeGameConnections(game);
-
-	AppendPlayerEntry(game->players, CreatePlayer(0, DEALER));
-	AppendPlayerEntry(game->players, CreatePlayer(1, PLAYER));
-	AppendPlayerEntry(game->players, CreatePlayer(2, PLAYER));
-	AppendPlayerEntry(game->players, CreatePlayer(3, PLAYER));
-	AppendPlayerEntry(game->players, CreatePlayer(4, PLAYER));
+	InitializeGameConnections(game, playerCount);
 
 	GameRound(game);
 

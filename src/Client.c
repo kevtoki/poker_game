@@ -17,6 +17,7 @@ ServerConnection *CreateServerConnection(const char *hostname, int portno){
 	conn->server = gethostbyname(hostname);
 	if (conn->server == NULL){
 		printf("ERROR, no such host\n");
+		DeleteServerConnection(conn);
 		return NULL;
 	}
 	bzero((char *) &conn->serv_addr, sizeof(conn->serv_addr));
@@ -25,10 +26,27 @@ ServerConnection *CreateServerConnection(const char *hostname, int portno){
 	conn->serv_addr.sin_port = htons(portno);
 	if (connect(conn->sockfd, (struct sockaddr *) &conn->serv_addr, sizeof(conn->serv_addr)) < 0){
 		printf("ERROR connecting\n");
+		DeleteServerConnection(conn);
 	}
 
 
 	return conn;
+}
+
+
+ServerConnection *ConnectToServer(const char *hostname, int startingPort){
+	int connectionTryDepth = 10;
+	ServerConnection *conn;
+
+	for (int i = 0; i < connectionTryDepth; i++){
+		conn = CreateServerConnection(hostname, startingPort + i);
+
+		if (conn != NULL){
+			return conn;
+		}
+	}
+
+	return NULL;
 }
 
 
