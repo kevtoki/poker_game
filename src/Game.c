@@ -54,6 +54,7 @@ void InitializeGameConnections(Game *game, int activeConnections){
 		printf("Player registered on port %d with id %d\n", 10190 + i, i);
 	}
 
+	SelectDealer(game->players);
 }
 
 

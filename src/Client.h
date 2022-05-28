@@ -24,8 +24,6 @@ typedef struct {
 
 ServerConnection *CreateServerConnection(const char *hostname, int portno);
 
-ServerConnection *ConnectToServer(const char *hostname, int startingPort);
-
 const char *ReadServerConnection(ServerConnection *conn);
 
 void WriteServerConnection(ServerConnection *conn, const char *msg);

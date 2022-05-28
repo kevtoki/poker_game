@@ -33,6 +33,9 @@ void AppendPlayerEntry(PLIST *pList, Player *player);
 
 void DeletePlayerEntry(PLIST *pList, int index);
 
+PENTRY *GetPlayerEntry(PLIST *pList, int index);
+
+void SelectDealer(PLIST *pList);
 
 
 #endif

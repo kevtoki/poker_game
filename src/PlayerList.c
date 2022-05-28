@@ -1,8 +1,7 @@
 #include "Player.h"
 #include "PlayerList.h"
 #include <stdlib.h>
-
-
+#include <time.h>
 
 PLIST *CreatePlayerList(){
 	PLIST *pList = (PLIST *) malloc(sizeof(PLIST));
@@ -119,3 +118,20 @@ PENTRY *GetPlayerEntry(PLIST *pList, int index){
 
 	return entry;
 }
+
+
+void SelectDealer(PLIST *pList){
+	srand((unsigned) time(0));
+
+
+	int dealerIndex = rand() % pList->Length;
+
+
+	PENTRY *dealerEntry = GetPlayerEntry(pList, dealerIndex);
+
+	dealerEntry->Player->type = DEALER;
+
+	pList->Dealer = dealerEntry->Player;
+}
+
+

@@ -34,23 +34,6 @@ ServerConnection *CreateServerConnection(const char *hostname, int portno){
 }
 
 
-ServerConnection *ConnectToServer(const char *hostname, int startingPort){
-	int connectionTryDepth = 10;
-	ServerConnection *conn;
-
-	for (int i = 0; i < connectionTryDepth; i++){
-		conn = CreateServerConnection(hostname, startingPort + i);
-
-		if (conn != NULL){
-			printf("Successfully connected to %s on port %d", hostname, startingPort + i);
-			return conn;
-		}
-	}
-
-	return NULL;
-}
-
-
 const char *ReadServerConnection(ServerConnection *conn){
 	int n = read(conn->sockfd, conn->buffer, 255);
 	if (n < 0){
