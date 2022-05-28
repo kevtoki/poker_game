@@ -10,7 +10,7 @@
 ServerConnection *CreateServerConnection(const char *hostname, int portno){
 	ServerConnection *conn = malloc(sizeof(ServerConnection));
 
-	conn->server = malloc(sizeof(Host));
+	// conn->server = malloc(sizeof(Host));
 
 	conn->portno = portno;
 	conn->sockfd = socket(AF_INET, SOCK_STREAM, 0);
