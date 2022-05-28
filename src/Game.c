@@ -2,6 +2,7 @@
 #include "PlayerList.h"
 #include "Player.h"
 #include "Deck.h"
+#include "Server.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -41,8 +42,17 @@ void DealCards(Game *game){
 }
 
 
+void InitializeGameConnections(Game *game){
+
+
+}
+
+
 void GameLoop(){
 	Game *game = CreateGame();
+
+
+	InitializeGameConnections(game);
 
 	AppendPlayerEntry(game->players, CreatePlayer(0, DEALER));
 	AppendPlayerEntry(game->players, CreatePlayer(1, PLAYER));
@@ -123,29 +133,7 @@ void ProcessUserActions(Game *game){
 
 
 void GetUserInput(Game *game, Player *player){
-	int input = 0;
-	while (1){
-		printf("What action do you want to take?\n\n");
-		printf("1 - Call\n");
-		printf("2 - Raise\n");
-		printf("3 - Fold\n");
-
-		printf("Enter action here (1-3): ");
-		scanf("%d", &input);
-
-		if (input == 1){
-			BetPoints(game, player, 0);
-			return;
-		}
-		else if (input == 2){
-			BetPoints(game, player, 0);
-			return;
-		}
-		else if (input == 3){
-			player->p_state = FOLDED;
-			return;
-		}
-	}
+	const char *input = ReadConnection(player->connection);
 }
 
 

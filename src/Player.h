@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Deck.h"
+#include "Server.h"
 
 typedef enum {PLAYER, DEALER} TYPE;
 
@@ -13,12 +14,14 @@ typedef struct {
 	P_STATE p_state;
 	DECK *deck;
 	int points;
-
+	Connection *connection;
 
 } Player;
 
 
 Player *CreatePlayer(int id, TYPE type);
+
+void BindPlayerConnection(Player *player, Connection *conn);
 
 void DeletePlayer(Player *player);
 

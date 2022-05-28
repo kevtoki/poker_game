@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Deck.h"
+#include "Player.h"
 #include <stdlib.h>
 
 
@@ -17,10 +18,19 @@ Player *CreatePlayer(int id, TYPE type){
 	return player;
 }
 
+
+void BindPlayerConnection(Player *player, Connection *conn){
+	player->connection = conn;
+
+}
+
+
 void DeletePlayer(Player *player){
 	if (player->deck != NULL){
 		DeleteDeck(player->deck);
 	}
+
+	DeleteConnection(player->connection);
 
 	free(player);
 	player = NULL;

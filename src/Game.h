@@ -20,6 +20,8 @@ void DeleteGame(Game *game);
 
 void DealCards(Game *game);
 
+void InitializeGameConnections(Game *game);
+
 void GameLoop();
 
 void GameRound(Game *game);
