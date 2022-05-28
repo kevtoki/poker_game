@@ -52,7 +52,6 @@ void WriteConnection(ServerConnection *conn, const char *msg){
 
 void DeleteServerConnection(ServerConnection *conn){
 	close(conn->sockfd);
-	free(conn->server);
 	conn->server = NULL;
 	free(conn);
 	conn = NULL;
