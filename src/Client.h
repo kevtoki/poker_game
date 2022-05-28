@@ -26,7 +26,7 @@ ServerConnection *CreateServerConnection(const char *hostname, int portno);
 
 const char *ReadServerConnection(ServerConnection *conn);
 
-void WriteServerConnection(ServerConnection *conn);
+void WriteServerConnection(ServerConnection *conn, const char *msg);
 
 void DeleteServerConnection(ServerConnection *conn);
 

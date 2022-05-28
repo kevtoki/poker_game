@@ -32,7 +32,7 @@ ServerConnection *CreateServerConnection(const char *hostname, int portno){
 }
 
 
-const char *ReadConnection(ServerConnection *conn){
+const char *ReadServerConnection(ServerConnection *conn){
 	int n = read(conn->sockfd, conn->buffer, 255);
 	if (n < 0){
 		printf("ERROR reading from socket\n");
@@ -41,7 +41,7 @@ const char *ReadConnection(ServerConnection *conn){
 }
 
 
-void WriteConnection(ServerConnection *conn, const char *msg){
+void WriteServerConnection(ServerConnection *conn, const char *msg){
 	bzero(conn->buffer, 256);
 	int n = write(conn->sockfd, msg, strlen(msg));
 	if (n < 0){

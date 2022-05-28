@@ -7,6 +7,7 @@
 int main(){
 	Connection *conn = CreateConnection(10190);
 	OpenConnection(conn);
+	printf("%s", ReadConnection(conn));
 	DeleteConnection(conn);
 	// GameLoop();
 	return 0;
