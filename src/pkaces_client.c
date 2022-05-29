@@ -23,7 +23,9 @@ int main(int argc, char *argv[]){
 
 	ClientPlayer *player = CreateClientPlayer(game, conn);
 
-	HandlePacket(game, player, conn);
+	while (!game->gameOver){
+		HandlePacket(game, player, conn);
+	}
 
 
 	DeleteClientGame(game);

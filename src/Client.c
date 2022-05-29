@@ -143,6 +143,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 		game->playerData[1 + i] = msg[17 + i];
 	}
 
+	game->gameOver = msg[255];
 
 	for (int i = 0; i < 256; i++){
 		printf("%d ", msg[i]);
@@ -166,6 +167,8 @@ void SendPacket(ClientPlayer *player, char action, int betAmount){
 
 ClientGame *CreateClientGame(){
 	ClientGame *game = malloc(sizeof(ClientGame));
+
+	game->gameOver = 0;
 
 	return game;
 }

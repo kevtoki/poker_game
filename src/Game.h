@@ -41,8 +41,8 @@ Player *LastManStanding(Game *game);
 
 void PrintPlayerData(Game *game);
 
-void SendPacket(Game *game, Player *player, int newRound, int needsInput);
+void SendPacket(Game *game, Player *player, int newRound, int needsInput, int gameOver);
 
-void BroadcastPackets(Game *game, int newRound, int needsInput);
+void BroadcastPackets(Game *game, int newRound, int needsInput, int gameOver);
 
 #endif

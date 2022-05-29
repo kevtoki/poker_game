@@ -40,7 +40,7 @@ typedef struct {
 	char playerData[256];
 	int betPoints;
 	ClientPlayer *user;
-
+	int gameOver;
 
 } ClientGame;
 

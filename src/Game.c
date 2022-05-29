@@ -87,9 +87,6 @@ void GameLoop(int playerCount){
 
 	InitializeGameConnections(game, playerCount);
 
-	SendPacket(game, game->players->First->Player, 1, 1);
-	SendPacket(game, game->Dealer, 1, 1);
-
 	GameRound(game);
 
 	DeleteGame(game);
@@ -108,7 +105,7 @@ void GameRound(Game *game){
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
 
-	BroadcastPackets(game, 0, 0);
+	BroadcastPackets(game, 0, 0, 0);
 
 	// ProcessUserActions(game);
 
@@ -137,6 +134,9 @@ void GameRound(Game *game){
 	}
 
 	EmptyDeck(game->boardCards);
+
+	
+	BroadcastPackets(game, 0, 0, 1);
 }
 
 
@@ -220,7 +220,7 @@ void PrintPlayerData(Game *game){
 }
 
 
-void SendPacket(Game *game, Player *player, int newRound, int needsInput){
+void SendPacket(Game *game, Player *player, int newRound, int needsInput, int gameOver){
 
 	// Server Packet Encoding Protocol
 	// msg[0] - new round indicator, if this is one the Client's cards get wiped for the new round
@@ -267,15 +267,18 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput){
 		entry = entry->Next;
 	}
 
+	msg[255] = gameOver;
+
+
 	WriteConnection(player->connection, msg);
 
 }
 
-void BroadcastPackets(Game *game, int newRound, int needsInput){
+void BroadcastPackets(Game *game, int newRound, int needsInput, int gameOver){
 
 	PENTRY *entry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
-		SendPacket(game, entry->Player, newRound, needsInput);
+		SendPacket(game, entry->Player, newRound, needsInput, gameOver);
 		entry = entry->Next;
 	}
 
