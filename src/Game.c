@@ -255,7 +255,13 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	msg[6] = player->points;
 	msg[7] = game->betPoints;
 
-	msg[16] = game->players->Length - 1;
+	if (player->type == DEALER){
+		msg[16] = game->players->Length;
+	}
+	else {
+		msg[16] = game->players->Length - 1;
+	}
+
 
 	PENTRY *entry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
@@ -282,6 +288,6 @@ void BroadcastPackets(Game *game, int newRound, int needsInput, int gameOver){
 		entry = entry->Next;
 	}
 
-
+	SendPacket(game, game->Dealer, newRound, needsInput, gameOver);
 
 }
