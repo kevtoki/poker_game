@@ -89,7 +89,7 @@ void GameLoop(int playerCount){
 
 	SendPacket(game, game->players->First->Player, 1, 1);
 
-	// GameRound(game);
+	GameRound(game);
 
 	DeleteGame(game);
 }
