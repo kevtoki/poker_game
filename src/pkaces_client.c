@@ -26,8 +26,7 @@ int main(int argc, char *argv[]){
 	HandlePacket(game, player, conn);
 
 
-	DeleteClientPlayer(player);
+	DeleteClientGame(game);
 
-	DeleteServerConnection(conn);
 	return 0;
 }

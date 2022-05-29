@@ -74,8 +74,6 @@ ClientPlayer *CreateClientPlayer(ClientGame *game, ServerConnection *conn){
 
 	game->user = player;
 
-	HandlePacket(game, player, conn);
-
 	return player;
 
 }
@@ -143,6 +141,11 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 
 	for (int i = 0; i < msg[16]; i++){
 		game->playerData[1 + i] = msg[17 + i];
+	}
+
+
+	for (int i = 0; i < 256; i++){
+		printf("%d", msg[i]);
 	}
 }
 
