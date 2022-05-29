@@ -5,6 +5,8 @@
 #include "Server.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+
 
 Game *CreateGame(){
 	Game *game = (Game *) malloc(sizeof(Game));
@@ -28,17 +30,39 @@ void DeleteGame(Game *game){
 
 	game->players = NULL;
 
+	free(game->boardCards);
+
+	game->boardCards = NULL;
+
+	DeletePlayer(game->Dealer);
+
+	game->Dealer = NULL;
+
 	free(game);
 }
 
 
 void DealCards(Game *game){
-	Player *dealer = game->players->Dealer;
+	Player *dealer = game->Dealer;
 	PENTRY *pEntry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
 		TransferCard(dealer->deck, pEntry->Player->deck, 0);
+
 		pEntry = pEntry->Next;
 	}
+}
+
+
+void SelectDealer(Game *game){
+	srand((unsigned) time(0));
+
+	int dealerIndex = rand() % game->players->Length;
+
+	Player *dealer = PopPlayerEntry(game->players, dealerIndex);
+
+	dealer->type = DEALER;
+
+	game->Dealer = dealer;
 }
 
 
@@ -54,7 +78,7 @@ void InitializeGameConnections(Game *game, int activeConnections){
 		printf("Player registered on port %d with id %d\n", 10190 + i, i);
 	}
 
-	SelectDealer(game->players);
+	SelectDealer(game);
 }
 
 
@@ -63,34 +87,36 @@ void GameLoop(int playerCount){
 
 	InitializeGameConnections(game, playerCount);
 
-	GameRound(game);
+	SendPacket(game, game->players->First->Player, 1, 1);
+
+	// GameRound(game);
 
 	DeleteGame(game);
 }
 
 
 void GameRound(Game *game){
-	FillDeck(game->players->Dealer->deck);
+	FillDeck(game->Dealer->deck);
 
-	ShuffleDeck(game->players->Dealer->deck);
+	ShuffleDeck(game->Dealer->deck);
 	DealCards(game);
 	DealCards(game);
 
-	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
-	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
-	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
+	TransferCard(game->Dealer->deck, game->boardCards, 0);
+	TransferCard(game->Dealer->deck, game->boardCards, 0);
+	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
 	ProcessUserActions(game);
 
 	LastManStanding(game);
 
-	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
+	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
 	ProcessUserActions(game);
 
 	LastManStanding(game);
 
-	TransferCard(game->players->Dealer->deck, game->boardCards, 0);
+	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
 	ProcessUserActions(game);
 
@@ -126,9 +152,7 @@ int BetPoints(Game *game, Player *player, int points){
 void ProcessUserActions(Game *game){
 	PENTRY *pEntry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
-		if (pEntry->Player->type != DEALER){
-			GetUserInput(game, pEntry->Player);
-		}
+		GetUserInput(game, pEntry->Player);
 
 		pEntry = pEntry->Next;
 	}
@@ -189,4 +213,53 @@ void PrintPlayerData(Game *game){
 
 		pEntry = pEntry->Next;
 	}
+}
+
+
+void SendPacket(Game *game, Player *player, int newRound, int needsInput){
+
+	// Server Packet Encoding Protocol
+	// msg[0] - new round indicator, if this is one the Client's cards get wiped for the new round
+	// msg[1] - input key, if this is one then the user gets prompted for input
+	// msg[2] to msg[5] - card data for player
+	// msg[6] - the number of points the player has
+	// msg[7] - the jackpot value (points)
+	// msg[16] - number of players in the match
+	// msg[17] - player's id (numbers ascending from 0)
+	// msg[18] - player's state (playing or folded)
+	// msg[19] - player's number of points
+	// msg[20] - next player's id
+	// ...
+
+	char msg[256] = {0};
+
+	msg[0] = newRound;
+	msg[1] = needsInput;
+
+	if (player->deck->Length == 2){
+		DENTRY *entry = player->deck->First;
+
+		msg[2] = entry->Card->suit;
+		msg[3] = entry->Card->rank;
+
+		entry = entry->Next;
+
+		msg[4] = entry->Card->suit;
+		msg[5] = entry->Card->rank;
+	}
+
+	msg[6] = player->points;
+	msg[7] = game->betPoints;
+
+	PENTRY *entry = game->players->First;
+	for (int i = 0; i < game->players->Length; i++){
+		msg[17 + (i * 3)] = entry->Player->id;
+		msg[18 + (i * 3)] = entry->Player->p_state;
+		msg[19 + (i * 3)] = entry->Player->points;
+		
+		entry = entry->Next;
+	}
+
+	WriteConnection(player->connection, msg);
+
 }

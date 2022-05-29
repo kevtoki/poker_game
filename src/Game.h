@@ -7,6 +7,7 @@
 
 typedef struct {
 	PLIST *players;
+	Player *Dealer;
 	DECK *boardCards;
 	int betPoints;
 
@@ -19,6 +20,8 @@ Game *CreateGame();
 void DeleteGame(Game *game);
 
 void DealCards(Game *game);
+
+void SelectDealer(Game *game);
 
 void InitializeGameConnections(Game *game, int activeConnections);
 
@@ -37,5 +40,7 @@ Player *EvaluateHands(Game *game);
 Player *LastManStanding(Game *game);
 
 void PrintPlayerData(Game *game);
+
+void SendPacket(Game *game, Player *player, int newRound, int needsInput);
 
 #endif

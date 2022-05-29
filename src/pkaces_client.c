@@ -15,6 +15,19 @@ int main(int argc, char *argv[]){
 
 	ServerConnection *conn = CreateServerConnection(argv[1], atoi(argv[2]));
 
+	if (conn == NULL){
+		return 0;
+	}
+
+	ClientGame *game = CreateClientGame();
+
+	ClientPlayer *player = CreateClientPlayer(game, conn);
+
+	HandlePacket(game, player, conn);
+
+
+	DeleteClientPlayer(player);
+
 	DeleteServerConnection(conn);
 	return 0;
 }

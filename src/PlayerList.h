@@ -10,7 +10,6 @@ typedef struct PlayerEntry PENTRY;
 struct PlayerList{
 	PENTRY *First;
 	PENTRY *Last;
-	Player *Dealer;
 	int Length;
 
 };
@@ -31,11 +30,11 @@ void DeletePlayerList(PLIST *pList);
 
 void AppendPlayerEntry(PLIST *pList, Player *player);
 
+Player *PopPlayerEntry(PLIST *pList, int index);
+
 void DeletePlayerEntry(PLIST *pList, int index);
 
 PENTRY *GetPlayerEntry(PLIST *pList, int index);
-
-void SelectDealer(PLIST *pList);
 
 
 #endif

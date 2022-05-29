@@ -9,7 +9,6 @@ PLIST *CreatePlayerList(){
 	pList->Length = 0;
 	pList->First = NULL;
 	pList->Last = NULL;
-	pList->Dealer = NULL;
 
 	return pList;
 }
@@ -23,7 +22,6 @@ void DeletePlayerList(PLIST *pList){
 
 	pList->Last = NULL;
 	pList->First = NULL;
-	pList->Dealer = NULL;
 
 	free(pList);
 }
@@ -52,11 +50,57 @@ void AppendPlayerEntry(PLIST *pList, Player *player){
 	}
 
 	pList->Last = pEntry;
-
-	if (player->type == DEALER){
-		pList->Dealer = player;
-	}
 }
+
+
+Player *PopPlayerEntry(PLIST *pList, int index){
+	PENTRY *entry = pList->First;
+
+	if (index < 0 || index >= pList->Length){
+		return NULL;
+	}
+
+	for (int i = 0; i < index; i++){
+		entry = entry->Next;
+	}
+
+	PENTRY *entryprev = entry->Prev;
+	PENTRY *entrynext = entry->Next;
+
+	if (pList->Length == 1){
+		pList->Last = NULL;
+		pList->First = NULL;
+	}
+	else if (index == 0){
+		pList->First = entry->Next;
+		entrynext->Prev = NULL;
+	}
+	else if (index == pList->Length - 1){
+		pList->Last = entry->Prev;
+		entryprev->Next = NULL;
+	}
+	else {
+		entryprev->Next = entrynext;
+		entrynext->Prev = entryprev;
+	}
+
+	entry->Next = NULL;
+	entry->Prev = NULL;
+
+	Player *player = entry->Player;
+
+	entry->Player = NULL;
+
+	entry->pList = NULL;
+
+	free(entry);
+
+	pList->Length--;
+
+
+	return player;
+}
+
 
 void DeletePlayerEntry(PLIST *pList, int index){
 	PENTRY *entry = pList->First;
@@ -120,18 +164,5 @@ PENTRY *GetPlayerEntry(PLIST *pList, int index){
 }
 
 
-void SelectDealer(PLIST *pList){
-	srand((unsigned) time(0));
-
-
-	int dealerIndex = rand() % pList->Length;
-
-
-	PENTRY *dealerEntry = GetPlayerEntry(pList, dealerIndex);
-
-	dealerEntry->Player->type = DEALER;
-
-	pList->Dealer = dealerEntry->Player;
-}
 
 
