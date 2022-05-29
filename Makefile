@@ -7,7 +7,7 @@ CFLAGS = -g
 
 
 # Default Target
-.DEFAULT_GOAL := server
+.DEFAULT_GOAL := all
 
 
 ########## Generate object files ##########
@@ -61,6 +61,11 @@ client: $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o $(COMPILE_PATH)Ca
 
 
 ########## Other functions ################
+#Target to make both server and client
+all:
+	make server
+	make client
+
 # Target for clean up
 clean:
 	make obj_clean

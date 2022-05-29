@@ -8,6 +8,8 @@
 #include "Client.h"
 #include "Card.h"
 
+#define PACKET_SIZE 256
+
 ServerConnection *CreateServerConnection(const char *hostname, int portno){
 	ServerConnection *conn = malloc(sizeof(ServerConnection));
 
@@ -38,7 +40,7 @@ ServerConnection *CreateServerConnection(const char *hostname, int portno){
 
 
 const char *ReadServerConnection(ServerConnection *conn){
-	int n = read(conn->sockfd, conn->buffer, 255);
+	int n = read(conn->sockfd, conn->buffer, PACKET_SIZE);
 	if (n < 0){
 		printf("ERROR reading from socket\n");
 	}
@@ -47,7 +49,7 @@ const char *ReadServerConnection(ServerConnection *conn){
 
 
 void WriteServerConnection(ServerConnection *conn, const char *msg){
-	bzero(conn->buffer, 256);
+	bzero(conn->buffer, PACKET_SIZE);
 	int n = write(conn->sockfd, msg, strlen(msg));
 	if (n < 0){
 		printf("ERROR writing to socket\n");
@@ -111,11 +113,11 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	// msg[2] to msg[5] - card data for player
 	// msg[6] - the number of points the player has
 	// msg[7] - the jackpot value (points)
-	// msg[16] - number of players in the match
-	// msg[17] - player's id (numbers ascending from 0)
-	// msg[18] - player's state (playing or folded)
-	// msg[19] - player's amount bet (if any)
-	// msg[20] - next player's id
+	// msg[64] - number of players in the match
+	// msg[65] - player's id (numbers ascending from 0)
+	// msg[66] - player's state (playing or folded)
+	// msg[67] - player's amount bet (if any)
+	// msg[68] - next player's id
 	// ...
 
 
@@ -126,8 +128,13 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	game->betPoints = msg[7];
 
 	if (newRound){
-		DeleteCard(player->card1);
-		DeleteCard(player->card1);
+		if (player->card1 != NULL){
+			DeleteCard(player->card1);
+		}
+
+		if (player->card2 != NULL){
+			DeleteCard(player->card2);
+		}
 		player->card1 = NULL;
 		player->card2 = NULL;
 	}
@@ -137,18 +144,23 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 		player->card2 = CreateCard(msg[4], msg[5]);
 	}
 
-	game->playerData[0] = msg[16];
+	game->playerData[0] = msg[64];
 
-	for (int i = 0; i < msg[16]; i++){
-		game->playerData[1 + i] = msg[17 + i];
+	for (int i = 0; i < msg[64]; i++){
+		game->playerData[1 + i] = msg[65 + i];
 	}
 
-	game->gameOver = msg[254];
+	game->gameOver = msg[8];
 
 	for (int i = 0; i < 256; i++){
 		printf("%d ", msg[i]);
 	}
 	printf("\n");
+
+	if (needsInput){
+		// GetUserInput();
+	}
+
 }
 
 

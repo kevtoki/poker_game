@@ -38,7 +38,7 @@ void OpenConnection(Connection *conn){
 
 
 const char *ReadConnection(Connection *conn){
-	int n = read(conn->newsockfd, conn->buffer, 255);
+	int n = read(conn->newsockfd, conn->buffer, 256);
 
 	if (n < 0){
 		printf("ERROR reading from socket\n");
@@ -49,12 +49,12 @@ const char *ReadConnection(Connection *conn){
 
 void WriteConnection(Connection *conn, const char *msg){
 	bzero(conn->buffer, 256);
-	int n = write(conn->newsockfd, msg, (sizeof(msg) / sizeof(char)));
+	int n = write(conn->newsockfd, msg, 256);
 	if (n < 0){
 		printf("ERROR writing to socket\n");
 	}
 
-	printf("Sending data through port %d", ntohs(conn->serv_addr.sin_port));
+	printf("Sending data through port %d\n", ntohs(conn->serv_addr.sin_port));
 }
 
 

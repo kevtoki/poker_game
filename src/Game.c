@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 
 Game *CreateGame(){
@@ -108,6 +109,8 @@ void GameRound(Game *game){
 
 	BroadcastPackets(game, 0, 0, 0);
 
+	sleep(1);
+
 	// ProcessUserActions(game);
 
 	// LastManStanding(game);
@@ -137,7 +140,9 @@ void GameRound(Game *game){
 	EmptyDeck(game->boardCards);
 
 	
-	// BroadcastPackets(game, 0, 0, 1);
+	BroadcastPackets(game, 1, 1, 1);
+
+	sleep(1);
 }
 
 
@@ -165,7 +170,7 @@ void ProcessUserActions(Game *game){
 
 
 void GetUserInput(Game *game, Player *player){
-	const char *input = ReadConnection(player->connection);
+	// const char *input = ReadConnection(player->connection);
 }
 
 
@@ -229,14 +234,14 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	// msg[2] to msg[5] - card data for player
 	// msg[6] - the number of points the player has
 	// msg[7] - the jackpot value (points)
-	// msg[16] - number of players in the match
-	// msg[17] - player's id (numbers ascending from 0)
-	// msg[18] - player's state (playing or folded)
-	// msg[19] - player's number of points
-	// msg[20] - next player's id
+	// msg[64] - number of players in the match
+	// msg[65] - player's id (numbers ascending from 0)
+	// msg[66] - player's state (playing or folded)
+	// msg[67] - player's number of points
+	// msg[68] - next player's id
 	// ...
 
-	char msg[256] = {0};
+	char msg[256] = {[0 ... 255] = 0};
 
 	msg[0] = newRound;
 	msg[1] = needsInput;
@@ -257,25 +262,24 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	msg[7] = game->betPoints;
 
 	if (player->type == DEALER){
-		msg[16] = game->players->Length;
+		msg[64] = game->players->Length;
 	}
 	else {
-		msg[16] = game->players->Length - 1;
+		msg[64] = game->players->Length - 1;
 	}
 
 
 	PENTRY *entry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
 		if (entry->Player != player){
-			msg[17 + (i * 3)] = entry->Player->id;
-			msg[18 + (i * 3)] = entry->Player->p_state;
-			msg[19 + (i * 3)] = entry->Player->points;
+			msg[65 + (i * 3)] = entry->Player->id;
+			msg[66 + (i * 3)] = entry->Player->p_state;
+			msg[67 + (i * 3)] = entry->Player->points;
 		}
 		entry = entry->Next;
 	}
 
-	msg[254] = gameOver;
-
+	msg[255] = gameOver;
 
 	WriteConnection(player->connection, msg);
 
