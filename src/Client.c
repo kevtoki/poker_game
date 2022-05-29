@@ -150,12 +150,14 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 		game->playerData[1 + i] = msg[65 + i];
 	}
 
-	game->gameOver = msg[8];
+	game->gameOver = msg[255];
 
+	/*
 	for (int i = 0; i < 256; i++){
 		printf("%d ", msg[i]);
 	}
 	printf("\n");
+	*/
 
 	if (needsInput){
 		// GetUserInput();
