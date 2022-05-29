@@ -43,4 +43,6 @@ void PrintPlayerData(Game *game);
 
 void SendPacket(Game *game, Player *player, int newRound, int needsInput);
 
+void BroadcastPackets(Game *game, int newRound, int needsInput);
+
 #endif

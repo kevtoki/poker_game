@@ -13,7 +13,7 @@ Player *CreatePlayer(int id, TYPE type){
 
 	player->deck = CreateDeck();
 
-	player->points = 100;
+	player->points = 20;
 
 	return player;
 }

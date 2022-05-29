@@ -145,7 +145,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 
 
 	for (int i = 0; i < 256; i++){
-		printf("%d", msg[i]);
+		printf("%d ", msg[i]);
 	}
 	printf("\n");
 }

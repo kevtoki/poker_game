@@ -88,6 +88,7 @@ void GameLoop(int playerCount){
 	InitializeGameConnections(game, playerCount);
 
 	SendPacket(game, game->players->First->Player, 1, 1);
+	SendPacket(game, game->Dealer, 1, 1);
 
 	GameRound(game);
 
@@ -106,23 +107,26 @@ void GameRound(Game *game){
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
-	ProcessUserActions(game);
 
-	LastManStanding(game);
+	BroadcastPackets(game, 0, 0);
 
-	TransferCard(game->Dealer->deck, game->boardCards, 0);
+	// ProcessUserActions(game);
 
-	ProcessUserActions(game);
-
-	LastManStanding(game);
+	// LastManStanding(game);
 
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
-	ProcessUserActions(game);
+	// ProcessUserActions(game);
 
-	LastManStanding(game);
+	// LastManStanding(game);
 
-	EvaluateHands(game);
+	TransferCard(game->Dealer->deck, game->boardCards, 0);
+
+	// ProcessUserActions(game);
+
+	// LastManStanding(game);
+
+	// EvaluateHands(game);
 
 
 	PENTRY *pEntry = game->players->First;
@@ -251,15 +255,30 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput){
 	msg[6] = player->points;
 	msg[7] = game->betPoints;
 
+	msg[16] = game->players->Length - 1;
+
 	PENTRY *entry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
-		msg[17 + (i * 3)] = entry->Player->id;
-		msg[18 + (i * 3)] = entry->Player->p_state;
-		msg[19 + (i * 3)] = entry->Player->points;
-		
+		if (entry->Player != player){
+			msg[17 + (i * 3)] = entry->Player->id;
+			msg[18 + (i * 3)] = entry->Player->p_state;
+			msg[19 + (i * 3)] = entry->Player->points;
+		}
 		entry = entry->Next;
 	}
 
 	WriteConnection(player->connection, msg);
+
+}
+
+void BroadcastPackets(Game *game, int newRound, int needsInput){
+
+	PENTRY *entry = game->players->First;
+	for (int i = 0; i < game->players->Length; i++){
+		SendPacket(game, entry->Player, newRound, needsInput);
+		entry = entry->Next;
+	}
+
+
 
 }
