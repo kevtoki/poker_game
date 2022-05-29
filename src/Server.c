@@ -54,7 +54,7 @@ void WriteConnection(Connection *conn, const char *msg){
 		printf("ERROR writing to socket\n");
 	}
 
-
+	printf("Sending data through port %d", ntohs(conn->serv_addr.sin_port));
 }
 
 

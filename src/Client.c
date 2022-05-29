@@ -143,7 +143,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 		game->playerData[1 + i] = msg[17 + i];
 	}
 
-	game->gameOver = msg[255];
+	game->gameOver = msg[254];
 
 	for (int i = 0; i < 256; i++){
 		printf("%d ", msg[i]);

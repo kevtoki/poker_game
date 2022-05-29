@@ -63,6 +63,8 @@ void SelectDealer(Game *game){
 	dealer->type = DEALER;
 
 	game->Dealer = dealer;
+
+	printf("Player with id %d selected as dealer.\n", game->Dealer->id);
 }
 
 
@@ -104,7 +106,6 @@ void GameRound(Game *game){
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
-
 	BroadcastPackets(game, 0, 0, 0);
 
 	// ProcessUserActions(game);
@@ -136,7 +137,7 @@ void GameRound(Game *game){
 	EmptyDeck(game->boardCards);
 
 	
-	BroadcastPackets(game, 0, 0, 1);
+	// BroadcastPackets(game, 0, 0, 1);
 }
 
 
@@ -273,7 +274,7 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 		entry = entry->Next;
 	}
 
-	msg[255] = gameOver;
+	msg[254] = gameOver;
 
 
 	WriteConnection(player->connection, msg);

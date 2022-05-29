@@ -23,10 +23,15 @@ int main(int argc, char *argv[]){
 
 	ClientPlayer *player = CreateClientPlayer(game, conn);
 
-	while (!game->gameOver){
+	int x = 0;
+
+
+	while (!game->gameOver && x < 3){
 		HandlePacket(game, player, conn);
+		x++;
 	}
 
+	
 
 	DeleteClientGame(game);
 
