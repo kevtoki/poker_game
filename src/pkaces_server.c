@@ -5,6 +5,6 @@
 #include "Server.h"
 
 int main(){
-	GameLoop(2);
+	GameLoop(3);
 	return 0;
 }

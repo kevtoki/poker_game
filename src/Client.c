@@ -113,13 +113,15 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 		printf("What would you like to do?\n");
 		printf("1 - Call\n");
 		printf("2 - Raise\n");
-		printf("3 - Fold\n");
+		printf("3 - Fold\n\n");
+		printf("Enter your input here: ");
 		scanf("%d", &input);
 	}
 
 	if (input == 2){
 		while (betAmount < game->minimumBet && betAmount > player->points){
-			printf("How much would you like to bet?\n");
+			printf("\nHow much would you like to bet?\n");
+			printf("Enter amount here (%d - %d): ", game->minimumBet, player->points);
 			scanf("%d", &betAmount);
 		}
 	}
