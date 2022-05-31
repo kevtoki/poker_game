@@ -256,11 +256,15 @@ ClientGame *CreateClientGame(){
 
 	game->gameOver = 0;
 
+	game->boardCards = CreateDeck();
+
 	return game;
 }
 
 
 void DeleteClientGame(ClientGame *game){
 	DeleteClientPlayer(game->user);
+	DeleteDeck(game->boardCards);
+	game->boardCards = NULL;
 	free(game);
 }
