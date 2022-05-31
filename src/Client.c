@@ -107,9 +107,9 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 	int betAmount = 0;
 	int canRaise = (player->points > game->minimumBet) ? 1 : 0;
 
-	printf("You have %d points. The minimum bet is %d points.", player->points, game->minimumBet);
+	printf("You have %d points. The minimum bet is %d points.\n", player->points, game->minimumBet);
 
-	while ((input < 1 && input > 3) || (!canRaise && input == 2)){
+	while ((input < 1 || input > 3) || (!canRaise && input == 2)){
 		printf("What would you like to do?\n");
 		printf("1 - Call\n");
 		printf("2 - Raise\n");
