@@ -31,6 +31,8 @@ void ShuffleDeck(DECK *deck);
 
 void EmptyDeck(DECK *deck);
 
+int HasCard(DECK *deck, Suit suit, Rank rank);
+
 void AppendDeckEntry(DECK *deck, Card *card);
 
 void DeleteDeckEntry(DECK *deck, int index);

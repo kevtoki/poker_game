@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include "Card.h"
+#include "Deck.h"
 
 typedef struct sockaddr_in Sockaddr_in;
 typedef struct hostent Host;
@@ -39,8 +40,11 @@ typedef struct {
 typedef struct {
 	char playerData[256];
 	int betPoints;
+	int minimumBet;
 	ClientPlayer *user;
 	int gameOver;
+
+	DECK *boardCards;
 
 } ClientGame;
 
@@ -61,6 +65,8 @@ void DeleteServerConnection(ServerConnection *conn);
 ClientPlayer *CreateClientPlayer(ClientGame *game, ServerConnection *conn);
 
 void DeleteClientPlayer(ClientPlayer *player);
+
+void HandleUserInput(ClientGame *game, ClientPlayer *player);
 
 void HandlePacket(ClientGame *game, ClientPlayer *player, ServerConnection *conn);
 

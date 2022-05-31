@@ -8,6 +8,9 @@
 #include <time.h>
 #include <unistd.h>
 
+#define MINIMUM_BET 1
+
+
 
 Game *CreateGame(){
 	Game *game = (Game *) malloc(sizeof(Game));
@@ -17,6 +20,8 @@ Game *CreateGame(){
 	game->boardCards = CreateDeck();
 
 	game->betPoints = 0;
+
+	game->minimumBet = MINIMUM_BET;
 
 	return game;
 }
@@ -92,11 +97,15 @@ void GameLoop(int playerCount){
 
 	GameRound(game);
 
-	DeleteGame(game);
+	BroadcastPackets(game, 1, 1, 1);
+
+	DeleteGame(game);	
 }
 
 
 void GameRound(Game *game){
+	Player *winner = NULL;
+
 	FillDeck(game->Dealer->deck);
 
 	ShuffleDeck(game->Dealer->deck);
@@ -109,26 +118,53 @@ void GameRound(Game *game){
 
 	BroadcastPackets(game, 0, 0, 0);
 
-	sleep(1);
+	ProcessUserActions(game);
 
-	// ProcessUserActions(game);
+	winner = LastManStanding(game);
 
-	// LastManStanding(game);
-
-	TransferCard(game->Dealer->deck, game->boardCards, 0);
-
-	// ProcessUserActions(game);
-
-	// LastManStanding(game);
+	if (winner != NULL){
+		GameRoundEnd(game, winner);
+		return;
+	}
 
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
-	// ProcessUserActions(game);
+	ProcessUserActions(game);
 
-	// LastManStanding(game);
+	winner = LastManStanding(game);
 
-	// EvaluateHands(game);
+	if (winner != NULL){
+		GameRoundEnd(game, winner);
+		return;
+	}
 
+	TransferCard(game->Dealer->deck, game->boardCards, 0);
+
+	ProcessUserActions(game);
+
+	winner = LastManStanding(game);
+
+	if (winner != NULL){
+		GameRoundEnd(game, winner);
+		return;
+	}
+
+	winner = EvaluateHands(game);
+
+
+
+	GameRoundEnd(game, winner);
+}
+
+
+void GameRoundEnd(Game *game, Player *winner){
+	if (winner != NULL){
+		winner->points += game->betPoints;
+		game->betPoints = 0;
+
+	}
+
+	game->minimumBet = MINIMUM_BET;
 
 	PENTRY *pEntry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
@@ -138,22 +174,18 @@ void GameRound(Game *game){
 	}
 
 	EmptyDeck(game->boardCards);
-
-	
-	BroadcastPackets(game, 1, 1, 1);
-
-	sleep(1);
 }
 
-
 int BetPoints(Game *game, Player *player, int points){
-	if (player->points < points){
+	if (player->points < points || points < game->minimumBet){
 		return 0;
 	}
 
 	player->points -= points;
 
 	game->betPoints += points;
+
+	game->minimumBet = points;
 
 	return 1;
 }
@@ -163,14 +195,14 @@ void ProcessUserActions(Game *game){
 	PENTRY *pEntry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
 		GetUserInput(game, pEntry->Player);
-
 		pEntry = pEntry->Next;
 	}
 }
 
 
 void GetUserInput(Game *game, Player *player){
-	// const char *input = ReadConnection(player->connection);
+	SendPacket(game, player, 0, 1, 0);
+	HandlePacket(game, player);
 }
 
 
@@ -234,6 +266,8 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	// msg[2] to msg[5] - card data for player
 	// msg[6] - the number of points the player has
 	// msg[7] - the jackpot value (points)
+	// msg[8] - minimum bet value (points)
+	// msg[32] to msg[41] - board card data
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
 	// msg[66] - player's state (playing or folded)
@@ -260,6 +294,16 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 
 	msg[6] = player->points;
 	msg[7] = game->betPoints;
+	msg[8] = game->minimumBet;
+
+	{
+		DENTRY *entry = game->boardCards->First;
+		for (int i = 0; i < game->boardCards->Length; i++){
+			msg[32 + (i * 2)] = entry->Card->suit;
+			msg[33 + (i * 2)] = entry->Card->rank;
+			entry = entry->Next;
+		}
+	}
 
 	if (player->type == DEALER){
 		msg[64] = game->players->Length;
@@ -295,4 +339,32 @@ void BroadcastPackets(Game *game, int newRound, int needsInput, int gameOver){
 
 	SendPacket(game, game->Dealer, newRound, needsInput, gameOver);
 
+}
+
+
+void DecodePacket(Game *game, Player *player, const char *msg){
+	char action = msg[0];
+	int betAmount = msg[1];
+
+	switch (action){
+		case 'c':
+			BetPoints(game, player, betAmount);
+			break;
+
+		case 'b':
+			BetPoints(game, player, betAmount);
+			break;
+
+		case 'f':
+			player->p_state = FOLDED;
+			break;
+
+		default:
+			break;
+	}
+}
+
+
+void HandlePacket(Game *game, Player *player){
+	DecodePacket(game, player, ReadConnection(player->connection));
 }

@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 #include "Server.h"
 
+#define PACKET_SIZE 256
+
 Connection *CreateConnection(int portno){
 	Connection *conn = malloc(sizeof(Connection));
 	conn->portno = portno;
@@ -33,12 +35,12 @@ void OpenConnection(Connection *conn){
 	if (conn->newsockfd < 0){
 		printf("ERROR on accept");
 	}
-	bzero(conn->buffer, 256);
+	bzero(conn->buffer, PACKET_SIZE);
 }
 
 
 const char *ReadConnection(Connection *conn){
-	int n = read(conn->newsockfd, conn->buffer, 256);
+	int n = read(conn->newsockfd, conn->buffer, PACKET_SIZE);
 
 	if (n < 0){
 		printf("ERROR reading from socket\n");
@@ -48,8 +50,8 @@ const char *ReadConnection(Connection *conn){
 
 
 void WriteConnection(Connection *conn, const char *msg){
-	bzero(conn->buffer, 256);
-	int n = write(conn->newsockfd, msg, 256);
+	bzero(conn->buffer, PACKET_SIZE);
+	int n = write(conn->newsockfd, msg, PACKET_SIZE);
 	if (n < 0){
 		printf("ERROR writing to socket\n");
 	}

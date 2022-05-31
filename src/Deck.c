@@ -62,6 +62,18 @@ void EmptyDeck(DECK *deck){
 
 }
 
+int HasCard(DECK *deck, Suit suit, Rank rank){
+	DENTRY *entry = deck->First;
+	for (int i = 0; i < deck->Length; i++){
+		if (entry->Card->suit == suit && entry->Card->rank == rank){
+			return 1;
+		}
+		entry = entry->Next;
+	}
+
+	return 0;
+}
+
 void AppendDeckEntry(DECK *deck, Card *card){
 	DENTRY *dEntry = (DENTRY *) malloc(sizeof(DENTRY));
 

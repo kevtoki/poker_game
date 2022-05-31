@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 #include "Client.h"
 #include "Card.h"
+#include "Deck.h"
+
 
 #define PACKET_SIZE 256
 
@@ -50,7 +52,7 @@ const char *ReadServerConnection(ServerConnection *conn){
 
 void WriteServerConnection(ServerConnection *conn, const char *msg){
 	bzero(conn->buffer, PACKET_SIZE);
-	int n = write(conn->sockfd, msg, strlen(msg));
+	int n = write(conn->sockfd, msg, PACKET_SIZE);
 	if (n < 0){
 		printf("ERROR writing to socket\n");
 	}
@@ -100,6 +102,51 @@ void DeleteClientPlayer(ClientPlayer *player){
 }
 
 
+void HandleUserInput(ClientGame *game, ClientPlayer *player){
+	int input = 0;
+	int betAmount = 0;
+	int canRaise = (player->points > game->minimumBet) ? 1 : 0;
+
+	printf("You have %d points. The minimum bet is %d points.", player->points, game->minimumBet);
+
+	while ((input < 1 && input > 3) || (!canRaise && input == 2)){
+		printf("What would you like to do?\n");
+		printf("1 - Call\n");
+		printf("2 - Raise\n");
+		printf("3 - Fold\n");
+		scanf("%d", &input);
+	}
+
+	if (input == 2){
+		while (betAmount < game->minimumBet && betAmount > player->points){
+			printf("How much would you like to bet?\n");
+			scanf("%d", &betAmount);
+		}
+	}
+
+	char inputChar;
+	switch (input){
+		case 1:
+			inputChar = 'c';
+			break;
+
+		case 2:
+			inputChar = 'r';
+			break;
+
+		case 3:
+			inputChar = 'f';
+			break;
+
+		default:
+			inputChar = 'f';
+			break;
+	}
+
+	SendPacket(player, inputChar, betAmount);
+}
+
+
 void HandlePacket(ClientGame *game, ClientPlayer *player, ServerConnection *conn){
 	DecodePacket(game, player, ReadServerConnection(conn));
 }
@@ -113,10 +160,12 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	// msg[2] to msg[5] - card data for player
 	// msg[6] - the number of points the player has
 	// msg[7] - the jackpot value (points)
+	// msg[8] - minimum bet value (points)
+	// msg[32] to msg[41] - board card data
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
 	// msg[66] - player's state (playing or folded)
-	// msg[67] - player's amount bet (if any)
+	// msg[67] - player's number of points
 	// msg[68] - next player's id
 	// ...
 
@@ -126,6 +175,8 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 
 	player->points = msg[6];
 	game->betPoints = msg[7];
+	game->minimumBet = msg[8];
+
 
 	if (newRound){
 		if (player->card1 != NULL){
@@ -137,7 +188,24 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 		}
 		player->card1 = NULL;
 		player->card2 = NULL;
+
+		EmptyDeck(game->boardCards);
 	}
+
+	for (int i = 0; i < 5; i++){
+		int suit = msg[32 + (i * 2)];
+		int rank = msg[33 + (i * 2)];
+		if (suit == 0){
+			continue;
+		}
+
+		if (HasCard(game->boardCards, suit, rank)){
+			continue;
+		}
+
+		AppendDeckEntry(game->boardCards, CreateCard(suit, rank));
+	}
+
 
 	if (player->card1 == NULL && msg[2] != 0){
 		player->card1 = CreateCard(msg[2], msg[3]);
@@ -160,7 +228,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	*/
 
 	if (needsInput){
-		// GetUserInput();
+		HandleUserInput(game, player);
 	}
 
 }
@@ -171,7 +239,11 @@ void SendPacket(ClientPlayer *player, char action, int betAmount){
 
 	// Client Packet Encoding Protocol
 	// msg[0] - action indicator
+	// msg[1] - bet amount (if any)
 
+	msg[0] = action;
+
+	msg[1] = betAmount;
 
 
 	WriteServerConnection(player->connection, msg);

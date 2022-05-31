@@ -10,7 +10,7 @@ typedef struct {
 	Player *Dealer;
 	DECK *boardCards;
 	int betPoints;
-
+	int minimumBet;
 
 } Game;
 
@@ -29,6 +29,8 @@ void GameLoop();
 
 void GameRound(Game *game);
 
+void GameRoundEnd(Game *game, Player *winner);
+
 int BetPoints(Game *game, Player *player, int points);
 
 void ProcessUserActions(Game *game);
@@ -44,5 +46,9 @@ void PrintPlayerData(Game *game);
 void SendPacket(Game *game, Player *player, int newRound, int needsInput, int gameOver);
 
 void BroadcastPackets(Game *game, int newRound, int needsInput, int gameOver);
+
+void DecodePacket(Game *game, Player *player, const char *msg);
+
+void HandlePacket(Game *game, Player *player);
 
 #endif

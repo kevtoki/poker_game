@@ -7,7 +7,7 @@ int main(int argc, char *argv[]){
 
 	if (argc != 3){
 		printf("ERROR not enough arguments\n");
-		printf("Program shoudl be run with arguments <server> <portno>\n");
+		printf("Program should be run with arguments <hostname> <hostport>\n");
 
 		return 0;
 	}

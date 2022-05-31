@@ -1,5 +1,5 @@
 # Variables
-VERSION = Alpha
+VERSION = Beta
 SOURCE_PATH = ./src/
 COMPILE_PATH = ./bin/
 OPTIONS = gcc -Wall -std=c11
@@ -55,8 +55,8 @@ server: $(COMPILE_PATH)pkaces_server.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck
 	make obj_clean
 
 # Target for pkaces_client
-client: $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o $(COMPILE_PATH)Card.o
-	$(OPTIONS) $(CFLAGS) $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o $(COMPILE_PATH)Card.o -o $(COMPILE_PATH)pkaces_client
+client: $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o
+	$(OPTIONS) $(CFLAGS) $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o $(COMPILE_PATH)Card.o $(COMPILE_PATH)Deck.o -o $(COMPILE_PATH)pkaces_client
 	make obj_clean
 
 
