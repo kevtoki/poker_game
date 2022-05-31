@@ -97,7 +97,7 @@ void GameLoop(int playerCount){
 
 	GameRound(game);
 
-	BroadcastPackets(game, 1, 1, 1);
+	BroadcastPackets(game, 0, 0, 1);
 
 	DeleteGame(game);	
 }
@@ -129,6 +129,8 @@ void GameRound(Game *game){
 
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
+	BroadcastPackets(game, 0, 0, 0);
+
 	ProcessUserActions(game);
 
 	winner = LastManStanding(game);
@@ -139,6 +141,8 @@ void GameRound(Game *game){
 	}
 
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
+
+	BroadcastPackets(game, 0, 0, 0);
 
 	ProcessUserActions(game);
 
@@ -174,6 +178,8 @@ void GameRoundEnd(Game *game, Player *winner){
 	}
 
 	EmptyDeck(game->boardCards);
+
+	BroadcastPackets(game, 1, 0, 0);
 }
 
 int BetPoints(Game *game, Player *player, int points){
