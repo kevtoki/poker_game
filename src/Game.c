@@ -23,6 +23,8 @@ Game *CreateGame(){
 
 	game->minimumBet = MINIMUM_BET;
 
+	game->roundWinner = NULL;
+
 	return game;
 }
 
@@ -43,6 +45,8 @@ void DeleteGame(Game *game){
 	DeletePlayer(game->Dealer);
 
 	game->Dealer = NULL;
+
+	game->roundWinner = NULL;
 
 	free(game);
 }
@@ -95,7 +99,9 @@ void GameLoop(int playerCount){
 
 	InitializeGameConnections(game, playerCount);
 
-	GameRound(game);
+	while (PlayersWithPoints(game) < 2){
+		GameRound(game);
+	}
 
 	BroadcastPackets(game, 0, 0, 1);
 
@@ -104,7 +110,6 @@ void GameLoop(int playerCount){
 
 
 void GameRound(Game *game){
-	Player *winner = NULL;
 
 	FillDeck(game->Dealer->deck);
 
@@ -120,10 +125,10 @@ void GameRound(Game *game){
 
 	ProcessUserActions(game);
 
-	winner = LastManStanding(game);
+	game->roundWinner = LastManStanding(game);
 
-	if (winner != NULL){
-		GameRoundEnd(game, winner);
+	if (game->roundWinner != NULL){
+		GameRoundEnd(game);
 		return;
 	}
 
@@ -133,10 +138,10 @@ void GameRound(Game *game){
 
 	ProcessUserActions(game);
 
-	winner = LastManStanding(game);
+	game->roundWinner = LastManStanding(game);
 
-	if (winner != NULL){
-		GameRoundEnd(game, winner);
+	if (game->roundWinner != NULL){
+		GameRoundEnd(game);
 		return;
 	}
 
@@ -146,24 +151,24 @@ void GameRound(Game *game){
 
 	ProcessUserActions(game);
 
-	winner = LastManStanding(game);
+	game->roundWinner = LastManStanding(game);
 
-	if (winner != NULL){
-		GameRoundEnd(game, winner);
+	if (game->roundWinner != NULL){
+		GameRoundEnd(game);
 		return;
 	}
 
-	winner = EvaluateHands(game);
+	game->roundWinner = EvaluateHands(game);
 
 
 
-	GameRoundEnd(game, winner);
+	GameRoundEnd(game);
 }
 
 
-void GameRoundEnd(Game *game, Player *winner){
-	if (winner != NULL){
-		winner->points += game->betPoints;
+void GameRoundEnd(Game *game){
+	if (game->roundWinner != NULL){
+		game->roundWinner->points += game->betPoints;
 		game->betPoints = 0;
 
 	}
@@ -174,6 +179,7 @@ void GameRoundEnd(Game *game, Player *winner){
 	for (int i = 0; i < game->players->Length; i++){
 		EmptyDeck(pEntry->Player->deck);
 		pEntry->Player->p_state = PLAYING;
+		pEntry->Player->totalBetPoints = 0;
 		pEntry = pEntry->Next;
 	}
 
@@ -189,9 +195,13 @@ int BetPoints(Game *game, Player *player, int points){
 
 	player->points -= points;
 
+	player->totalBetPoints += points;
+
 	game->betPoints += points;
 
-	game->minimumBet = points;
+	if (game->minimumBet < player->totalBetPoints){
+		game->minimumBet = player->totalBetPoints;
+	}
 
 	return 1;
 }
@@ -245,6 +255,22 @@ Player *LastManStanding(Game *game){
 }
 
 
+int PlayersWithPoints(Game *game){
+	PENTRY *entry = game->players->First;
+
+	int playersWithPoints = 0;
+	
+	for (int i = 0; i < game->players->Length; i++){
+		if (entry->Player->points > 0){
+			playersWithPoints++;
+		}
+		entry = entry->Next;
+	}
+
+	return playersWithPoints;
+}
+
+
 void PrintPlayerData(Game *game){
 	printf("Suit | Spade = 1, Clubs = 2, Diamonds = 3, Hearts = 4\n");
 	printf("Rank | Ace = 1, ..., King = 13");
@@ -273,12 +299,15 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	// msg[6] - the number of points the player has
 	// msg[7] - the jackpot value (points)
 	// msg[8] - minimum bet value (points)
+	// msg[9] - the total bet of the player (points)
+	// msg[10] - id of the player that wo the round
 	// msg[32] to msg[41] - board card data
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
 	// msg[66] - player's state (playing or folded)
 	// msg[67] - player's number of points
 	// msg[68] - next player's id
+	// msg[255] - game over indicator, program exits if this is 1
 	// ...
 
 	char msg[256] = {[0 ... 255] = 0};
@@ -301,6 +330,8 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	msg[6] = player->points;
 	msg[7] = game->betPoints;
 	msg[8] = game->minimumBet;
+	msg[9] = player->totalBetPoints;
+	msg[10] = game->roundWinner->id;
 
 	{
 		DENTRY *entry = game->boardCards->First;

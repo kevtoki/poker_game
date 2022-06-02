@@ -76,6 +76,8 @@ ClientPlayer *CreateClientPlayer(ClientGame *game, ServerConnection *conn){
 
 	player->connection = conn;
 
+	player->totalBetPoints = 0;
+
 	game->user = player;
 
 	return player;
@@ -109,7 +111,7 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 
 	printf("You have %d points. The minimum bet is %d points.\n", player->points, game->minimumBet);
 
-	while ((input < 1 || input > 3) || (!canRaise && input == 2)){
+	while ((input < 1 || input > 3) || (!canRaise && input == 2) || (input == 1 && player->points < game->minimumBet - player->totalBetPoints)){
 		printf("What would you like to do?\n");
 		printf("1 - Call\n");
 		printf("2 - Raise\n");
@@ -119,7 +121,7 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 	}
 
 	if (input == 2){
-		while (betAmount < game->minimumBet || betAmount > player->points){
+		while (betAmount < (game->minimumBet - player->totalBetPoints) || betAmount > player->points){
 			printf("\nHow much would you like to bet?\n");
 			printf("Enter amount here (%d - %d): ", game->minimumBet, player->points);
 			scanf("%d", &betAmount);
@@ -130,6 +132,7 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 	switch (input){
 		case 1:
 			inputChar = 'c';
+			betAmount = game->minimumBet - player->totalBetPoints;
 			break;
 
 		case 2:
@@ -163,12 +166,15 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	// msg[6] - the number of points the player has
 	// msg[7] - the jackpot value (points)
 	// msg[8] - minimum bet value (points)
+	// msg[9] - the total bet of the player (points)
+	// msg[10] - id of player that won the round
 	// msg[32] to msg[41] - board card data
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
 	// msg[66] - player's state (playing or folded)
 	// msg[67] - player's number of points
 	// msg[68] - next player's id
+	// msg[255] - game over indicator, program exits if this is 1
 	// ...
 
 
@@ -178,6 +184,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	player->points = msg[6];
 	game->betPoints = msg[7];
 	game->minimumBet = msg[8];
+	player->totalBetPoints = msg[9];
 
 
 	if (newRound){
@@ -228,6 +235,10 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	}
 	printf("\n");
 	*/
+
+	if (msg[0] && msg[10]){
+		printf("Player with id %d has won the round!\n", msg[10]);
+	}
 
 	if (needsInput){
 		HandleUserInput(game, player);

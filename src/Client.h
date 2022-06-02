@@ -28,11 +28,12 @@ typedef struct {
 
 typedef struct {
 	int points;
+	int totalBetPoints;
 	PLAYERSTATE p_state;
 	Card *card1;
 	Card *card2;	
 	ServerConnection *connection;
-
+	
 
 } ClientPlayer;
 

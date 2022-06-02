@@ -13,6 +13,8 @@ Player *CreatePlayer(int id, TYPE type){
 
 	player->deck = CreateDeck();
 
+	player->totalBetPoints = 0;
+
 	player->points = 20;
 
 	return player;

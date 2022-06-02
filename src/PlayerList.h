@@ -36,5 +36,4 @@ void DeletePlayerEntry(PLIST *pList, int index);
 
 PENTRY *GetPlayerEntry(PLIST *pList, int index);
 
-
 #endif

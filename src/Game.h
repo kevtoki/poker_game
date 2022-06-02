@@ -11,6 +11,7 @@ typedef struct {
 	DECK *boardCards;
 	int betPoints;
 	int minimumBet;
+	Player *roundWinner;
 
 } Game;
 
@@ -29,7 +30,7 @@ void GameLoop();
 
 void GameRound(Game *game);
 
-void GameRoundEnd(Game *game, Player *winner);
+void GameRoundEnd(Game *game);
 
 int BetPoints(Game *game, Player *player, int points);
 
@@ -40,6 +41,8 @@ void GetUserInput(Game *game, Player *player);
 Player *EvaluateHands(Game *game);
 
 Player *LastManStanding(Game *game);
+
+int PlayersWithPoints(Game *game);
 
 void PrintPlayerData(Game *game);
 

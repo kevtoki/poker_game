@@ -2,7 +2,7 @@
 #define CARD_H
 
 typedef enum {SPADE = 1, CLUBS, DIAMONDS, HEARTS} Suit;
-typedef enum {ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING} Rank;
+typedef enum {TWO = 2, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE} Rank;
 
 typedef struct {
 	Suit suit;

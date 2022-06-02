@@ -14,6 +14,7 @@ typedef struct {
 	P_STATE p_state;
 	DECK *deck;
 	int points;
+	int totalBetPoints;
 	Connection *connection;
 
 } Player;

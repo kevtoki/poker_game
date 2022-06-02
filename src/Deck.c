@@ -22,7 +22,7 @@ void DeleteDeck(DECK *deck){
 }
 
 void FillDeck(DECK *deck){
-	Rank rank = ACE;
+	Rank rank = TWO;
 	Suit suit = SPADE;  
 	
 	for (int i = 0; i < 13; i++){
