@@ -99,7 +99,7 @@ void GameLoop(int playerCount){
 
 	InitializeGameConnections(game, playerCount);
 
-	while (PlayersWithPoints(game) < 2){
+	while (PlayersWithPoints(game) > 1){
 		GameRound(game);
 	}
 
@@ -331,7 +331,9 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	msg[7] = game->betPoints;
 	msg[8] = game->minimumBet;
 	msg[9] = player->totalBetPoints;
-	msg[10] = game->roundWinner->id;
+	if (game->roundWinner != NULL){
+		msg[10] = game->roundWinner->id;
+	}
 
 	{
 		DENTRY *entry = game->boardCards->First;

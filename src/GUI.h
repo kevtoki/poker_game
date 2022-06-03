@@ -1,25 +1,22 @@
 #ifndef GUI_H
 #define GUI_H
 
-// creates the window where each part of the game info is printed on
-void createWindow(int argc, char *argv[]);
+#include <gtk/gtk.h>
 
-// updates the cards the dealer has
-void updateCards();
+typedef struct {
+	GtkWidget *windowGTK;
+	GtkWidget *table;
 
-// updates the amount of points each rival player has
-void updateEnemyPoints();
+	GtkWidget *dealerCard1;
+	GtkWidget *dealerCard2;
+	GtkWidget *dealerCard3;
+	GtkWidget *dealerCard4;
+	GtkWidget *dealerCard5;
 
-// updates the cards and the amount of points the player has
-void updatePlayerPoints();
+	GtkWidget *playerCard1;
+	GtkWidget *playerCard2;
+} Window;
 
-// the callback function for the call button (performs call)
-void callButton(GtkWidget *widget, gpointer data);
-
-// the callback function for the raise button (performs raise)
-void raiseButton(GtkWidget *widget, gpointer data);
-
-// the callback function for the hold button (performs hold)
-void holdButton(GtkWidget *widget, gpointer data);
+Window *CreateWindow();
 
 #endif
