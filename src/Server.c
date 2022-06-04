@@ -20,9 +20,9 @@ Connection *CreateConnection(int portno){
     conn->serv_addr.sin_family = AF_INET;
     conn->serv_addr.sin_addr.s_addr = INADDR_ANY;
     conn->serv_addr.sin_port = htons(conn->portno);
-    if (bind(conn->sockfd, (struct sockaddr *) &conn->serv_addr, sizeof(conn->serv_addr)) < 0) 
+    if (bind(conn->sockfd, (struct sockaddr *) &conn->serv_addr, sizeof(conn->serv_addr)) < 0){ 
     	printf("ERROR on binding\n");
-    
+    }
 	return conn; 
 
 }

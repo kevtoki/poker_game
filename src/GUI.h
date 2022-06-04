@@ -15,7 +15,21 @@ typedef struct {
 
 	GtkWidget *playerCard1;
 	GtkWidget *playerCard2;
+
+	GtkWidget *points;
+	GtkWidget *bet;
+	GtkWidget *pot;
+
+	GtkWidget *checkCallBtn;
+	GtkWidget *checkCallAlign;
+	GtkWidget *raiseBtn;
+    GtkWidget *raiseAlign;
+	GtkWidget *foldBtn;
+    GtkWidget *foldAlign;
+
 } Window;
+
+int Raise();
 
 Window *CreateWindow();
 

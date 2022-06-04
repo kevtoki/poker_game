@@ -8,11 +8,11 @@ int main(int argc, char *argv[]){
 
 	gtk_init(NULL, NULL);
 
-	CreateWindow();
+	Window *window = CreateWindow();
 
 	gtk_main();
 
-	return 0;
+	//return 0;
 
 	if (argc != 3){
 		printf("ERROR not enough arguments\n");
