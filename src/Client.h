@@ -30,6 +30,7 @@ typedef struct {
 	int points;
 	int totalBetPoints;
 	PLAYERSTATE p_state;
+	int type;
 	Card *card1;
 	Card *card2;	
 	ServerConnection *connection;
@@ -42,8 +43,11 @@ typedef struct {
 	char playerData[256];
 	int betPoints;
 	int minimumBet;
+	int canRefresh;
 	ClientPlayer *user;
 	int gameOver;
+	int idOfWinner;
+	const char *connectionBuffer;
 
 	DECK *boardCards;
 
@@ -73,7 +77,7 @@ void HandlePacket(ClientGame *game, ClientPlayer *player, ServerConnection *conn
 
 void DecodePacket(ClientGame *game, ClientPlayer *player, const char *msg);
 
-void SendPacket(ClientPlayer *player, char action, int betAmount);
+void SendPacket(ClientGame *game, char action, int betAmount);
 
 
 // ClientGame functions
@@ -82,5 +86,9 @@ ClientGame *CreateClientGame();
 
 void DeleteClientGame(ClientGame *game);
 
+
+// Other functions
+
+void PrintGameData(ClientGame *game);
 
 #endif

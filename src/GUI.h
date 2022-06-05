@@ -2,6 +2,7 @@
 #define GUI_H
 
 #include <gtk/gtk.h>
+#include "Client.h"
 
 typedef struct {
 	GtkWidget *windowGTK;
@@ -16,21 +17,22 @@ typedef struct {
 	GtkWidget *playerCard1;
 	GtkWidget *playerCard2;
 
-	GtkWidget *points;
-	GtkWidget *bet;
-	GtkWidget *pot;
+	GtkWidget *refreshBtn;
+    GtkWidget *refreshAlign;
 
-	GtkWidget *checkCallBtn;
-	GtkWidget *checkCallAlign;
-	GtkWidget *raiseBtn;
-    GtkWidget *raiseAlign;
-	GtkWidget *foldBtn;
-    GtkWidget *foldAlign;
+	ClientGame *game;
+} GameWindow;
 
-} Window;
+GameWindow *CreateGameWindow(ClientGame *game);
 
-int Raise();
+void DeleteGameWindow(GameWindow *window);
 
-Window *CreateWindow();
+void RefreshGameWindow(GtkButton *button, gpointer user_data);
+
+void Call(GameWindow *window);
+
+void Raise(GameWindow *window);
+
+void Fold(GameWindow *window);
 
 #endif

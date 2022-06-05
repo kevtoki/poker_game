@@ -78,6 +78,8 @@ ClientPlayer *CreateClientPlayer(ClientGame *game, ServerConnection *conn){
 
 	player->totalBetPoints = 0;
 
+	player->type = -1;
+
 	game->user = player;
 
 	return player;
@@ -148,7 +150,7 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 			break;
 	}
 
-	SendPacket(player, inputChar, betAmount);
+	SendPacket(game, inputChar, betAmount);
 }
 
 
@@ -168,6 +170,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	// msg[8] - minimum bet value (points)
 	// msg[9] - the total bet of the player (points)
 	// msg[10] - id of player that won the round
+	// msg[11] - the type of the user (PLAYER or DEALER)
 	// msg[32] to msg[41] - board card data
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
@@ -185,7 +188,8 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	game->betPoints = msg[7];
 	game->minimumBet = msg[8];
 	player->totalBetPoints = msg[9];
-
+	game->idOfWinner = msg[10];
+	player->type = msg[11];
 
 	if (newRound){
 		if (player->card1 != NULL){
@@ -229,25 +233,21 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 
 	game->gameOver = msg[255];
 
-	/*
-	for (int i = 0; i < 256; i++){
-		printf("%d ", msg[i]);
-	}
-	printf("\n");
-	*/
+	game->connectionBuffer = msg;
 
-	if (msg[0] && msg[10]){
-		printf("Player with id %d has won the round!\n", msg[10]);
-	}
+	game->canRefresh = 0;
+
+	PrintGameData(game);
 
 	if (needsInput){
 		HandleUserInput(game, player);
 	}
 
+	game->canRefresh = 1;
 }
 
 
-void SendPacket(ClientPlayer *player, char action, int betAmount){
+void SendPacket(ClientGame *game, char action, int betAmount){
 	char msg[256] = {0};
 
 	// Client Packet Encoding Protocol
@@ -258,8 +258,9 @@ void SendPacket(ClientPlayer *player, char action, int betAmount){
 
 	msg[1] = betAmount;
 
+	game->canRefresh = 1;
 
-	WriteServerConnection(player->connection, msg);
+	WriteServerConnection(game->user->connection, msg);
 
 }
 
@@ -271,6 +272,12 @@ ClientGame *CreateClientGame(){
 
 	game->boardCards = CreateDeck();
 
+	game->connectionBuffer = NULL;
+
+	game->canRefresh = 1;
+
+	game->idOfWinner = -1;
+
 	return game;
 }
 
@@ -280,4 +287,25 @@ void DeleteClientGame(ClientGame *game){
 	DeleteDeck(game->boardCards);
 	game->boardCards = NULL;
 	free(game);
+}
+
+
+void PrintGameData(ClientGame *game){
+	printf("======== Game Info ========\n\n");
+	printf("The pot is currently: %d points\n", game->betPoints);
+	printf("The minimum bet is currently: %d points\n", game->minimumBet);
+
+	if (game->user->type == 0){
+		printf("Your total bet right now is: %d points\n", game->user->totalBetPoints);
+		printf("You currently have: %d points\n", game->user->points);
+	}
+	else if (game->user->type == 1){
+		printf("You are the Dealer so you do not bet!\n");
+	}
+
+	if (game->connectionBuffer[0] == 1){
+		printf("The winner of the last round was the player with id: %d\n", game->idOfWinner);
+	}
+
+	printf("\n=========================\n\n");
 }

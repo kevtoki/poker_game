@@ -301,6 +301,7 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	// msg[8] - minimum bet value (points)
 	// msg[9] - the total bet of the player (points)
 	// msg[10] - id of the player that wo the round
+	// msg[11] - the type of the user (PLAYER or DEALER)
 	// msg[32] to msg[41] - board card data
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
@@ -334,6 +335,8 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	if (game->roundWinner != NULL){
 		msg[10] = game->roundWinner->id;
 	}
+
+	msg[11] = player->type;
 
 	{
 		DENTRY *entry = game->boardCards->First;

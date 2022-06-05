@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "Client.h"
 #include "GUI.h"
 
@@ -7,12 +8,6 @@
 int main(int argc, char *argv[]){
 
 	gtk_init(NULL, NULL);
-
-	Window *window = CreateWindow();
-
-	gtk_main();
-
-	//return 0;
 
 	if (argc != 3){
 		printf("ERROR not enough arguments\n");
@@ -30,13 +25,13 @@ int main(int argc, char *argv[]){
 
 	ClientGame *game = CreateClientGame();
 
-	ClientPlayer *player = CreateClientPlayer(game, conn);
+	CreateClientPlayer(game, conn);
 
-	while (!game->gameOver){
-		HandlePacket(game, player, conn);
-	}
+	GameWindow *window = CreateGameWindow(game);
 
-	
+	gtk_main();
+
+	DeleteGameWindow(window);
 
 	DeleteClientGame(game);
 
