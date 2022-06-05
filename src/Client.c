@@ -151,6 +151,8 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 	}
 
 	SendPacket(game, inputChar, betAmount);
+
+	game->canRefresh = 1;
 }
 
 
@@ -172,6 +174,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	// msg[10] - id of player that won the round
 	// msg[11] - the type of the user (PLAYER or DEALER)
 	// msg[32] to msg[41] - board card data
+	// msg[63] - number of players still playing (not folded)
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
 	// msg[66] - player's state (playing or folded)
@@ -190,6 +193,9 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 	player->totalBetPoints = msg[9];
 	game->idOfWinner = msg[10];
 	player->type = msg[11];
+
+	game->activePlayers = msg[63];
+	game->numberOfPlayers = msg[64];
 
 	if (newRound){
 		if (player->card1 != NULL){
@@ -235,15 +241,10 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 
 	game->connectionBuffer = msg;
 
-	game->canRefresh = 0;
+	game->canRefresh = !needsInput;
 
 	PrintGameData(game);
 
-	if (needsInput){
-		HandleUserInput(game, player);
-	}
-
-	game->canRefresh = 1;
 }
 
 
@@ -278,6 +279,10 @@ ClientGame *CreateClientGame(){
 
 	game->idOfWinner = -1;
 
+	game->numberOfPlayers = 0;
+
+	game->activePlayers = 0;
+
 	return game;
 }
 
@@ -291,7 +296,10 @@ void DeleteClientGame(ClientGame *game){
 
 
 void PrintGameData(ClientGame *game){
-	printf("======== Game Info ========\n\n");
+	printf("======== Game/User Info ========\n\n");
+	printf("Your player id: %d\n", game->user->id);
+	printf("Number of players: %d\n", game->numberOfPlayers);
+	printf("Number of players not folded: %d\n", game->activePlayers);
 	printf("The pot is currently: %d points\n", game->betPoints);
 	printf("The minimum bet is currently: %d points\n", game->minimumBet);
 
@@ -307,5 +315,5 @@ void PrintGameData(ClientGame *game){
 		printf("The winner of the last round was the player with id: %d\n", game->idOfWinner);
 	}
 
-	printf("\n=========================\n\n");
+	printf("\n===========================\n\n");
 }

@@ -303,6 +303,7 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 	// msg[10] - id of the player that wo the round
 	// msg[11] - the type of the user (PLAYER or DEALER)
 	// msg[32] to msg[41] - board card data
+	// msg[63] - number of players still playing (not folded)
 	// msg[64] - number of players in the match
 	// msg[65] - player's id (numbers ascending from 0)
 	// msg[66] - player's state (playing or folded)
@@ -354,9 +355,14 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 		msg[64] = game->players->Length - 1;
 	}
 
+	int activePlayers = 0;
 
 	PENTRY *entry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
+		if (entry->Player->p_state == PLAYING){
+			activePlayers++;
+		}
+
 		if (entry->Player != player){
 			msg[65 + (i * 3)] = entry->Player->id;
 			msg[66 + (i * 3)] = entry->Player->p_state;
@@ -364,6 +370,8 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 		}
 		entry = entry->Next;
 	}
+
+	msg[63] = activePlayers;
 
 	msg[255] = gameOver;
 

@@ -1,14 +1,20 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
+#include <string.h>
+#include <strings.h>
 #include "GUI.h"
 #include "Client.h"
-
+#include "Card.h"
 
 #define WIDTH 640
 #define HEIGHT 480
 
 GameWindow *CreateGameWindow(ClientGame *game){
 	GameWindow *window = (GameWindow *) malloc(sizeof(GameWindow));
+
+	char *path = (char *) malloc(1000);
+
+	bzero(path, 1000);
 
     window->windowGTK = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -36,10 +42,14 @@ GameWindow *CreateGameWindow(ClientGame *game){
 	window->dealerCard5 = gtk_image_new_from_file("assets/images/back.jpg");
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->dealerCard5, 4, 5, 0, 1);
 
-	window->playerCard1 = gtk_image_new_from_file("assets/images/back.jpg");
+	CardToFilePath(path, game->user->card1);
+
+	window->playerCard1 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->playerCard1, 1, 2, 1, 2);
 
-	window->playerCard2 = gtk_image_new_from_file("assets/images/back.jpg");
+	CardToFilePath(path, game->user->card2);
+
+	window->playerCard2 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->playerCard2, 3, 4, 1, 2);
 
 	window->refreshAlign = gtk_alignment_new(0.5, 0.5, 0, 0);
@@ -53,6 +63,8 @@ GameWindow *CreateGameWindow(ClientGame *game){
 	gtk_widget_show_all(window->windowGTK);
 
 	window->game = game;
+
+	free(path);
 
 	return window;
 }
@@ -71,46 +83,135 @@ void RefreshGameWindow(GtkButton *button, gpointer user_data){
 		return;
 	}
 
+	/*
+	char *path = (char *) malloc(1000);
+	
+	bzero(path, 1000);
+
 	HandlePacket(gameWindow->game, gameWindow->game->user, gameWindow->game->user->connection);
 
+	CardToFilePath(path, gameWindow->game->user->card1);
+
+	gameWindow->playerCard1 = gtk_image_new_from_file(path);
+
+	CardToFilePath(path, gameWindow->game->user->card2);
+
+	gameWindow->playerCard2 = gtk_image_new_from_file(path);
+
+	free(path);
+
+	*/
+	gtk_widget_show_all(gameWindow->windowGTK);
+
+	if (gameWindow->game->connectionBuffer[1] == 1){
+		HandleUserInput(gameWindow->game, gameWindow->game->user);
+	}
+
 }
 
 
-void Call(GameWindow *window){
+void CardToFilePath(char *path, Card *card){
+	char *basePathDefault = "assets/images/back.jpg";
+	char *basePathStart = "assets/images/";
+	char *basePathEnd = ".jpg";
+	char *suitStr = (char *) malloc(1000);
+	char *rankStr = (char *) malloc(1000);
+
+	bzero(suitStr, 1000);
+	bzero(rankStr, 1000);
 
 
-}
+	if (card == NULL){
+		path = strcpy(path, basePathDefault);
+		return;
+	}
 
+	switch (card->suit){
+		case 1:
+			suitStr = "spades";			
+			break;
 
-void Raise(GameWindow *gameWindow){
+		case 2:
+			suitStr = "clubs";
+			break;
 
+		case 3:
+			suitStr = "diamonds";
+			break;
 
-	GtkWidget *window;
-	GtkWidget *table;
-	GtkWidget *entry;    
-	GtkWidget *label;
+		case 4:
+			suitStr = "hearts";
+			break;
 
-	g_print("Raise\n");
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(window), "Raise");
-	gtk_window_set_default_size(GTK_WINDOW(window), 200, 120);
-	table = gtk_table_new(2, 1, TRUE);
-	label = gtk_label_new("Please enter the amount you want to raise.\n");
-	entry = gtk_entry_new();
-	gtk_container_add(GTK_CONTAINER(window), table);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), entry, 0, 1, 1, 2);
+		default:
+			suitStr = "null";
+			break;
+	}
 
-	gtk_widget_show_all(window);
+	switch (card->rank){
+		case 2:
+			rankStr = "2";
+			break;
 
-	int raise_amount = atoi(gtk_entry_get_text(GTK_ENTRY(entry)));
+		case 3:
+			rankStr = "3";
+			break;
 
-	SendPacket(gameWindow->game, 'r', raise_amount);
-}
+		case 4:
+			rankStr = "4";
+			break;
 
+		case 5:
+			rankStr = "5";
+			break;
 
-void Fold(GameWindow *gameWindow){
+		case 6:
+			rankStr = "6";
+			break;
 
+		case 7:
+			rankStr = "7";
+			break;
 
+		case 8:
+			rankStr = "8";
+			break;
+
+		case 9:
+			rankStr = "9";
+			break;
+
+		case 10:
+			rankStr = "10";
+			break;
+
+		case 11:
+			rankStr = "jack";
+			break;
+
+		case 12:
+			rankStr = "queen";
+			break;
+
+		case 13:
+			rankStr = "king";
+			break;
+
+		case 14:
+			rankStr = "ace";
+			break;
+
+		default:
+			rankStr = "null";
+			break;
+	}
+
+	strcat(path, basePathStart);
+	strcat(path, rankStr);
+	strcat(path, "_");
+	strcat(path, "of");
+	strcat(path, "_");
+	strcat(path, suitStr);
+	strcat(path, basePathEnd);
 
 }

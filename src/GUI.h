@@ -29,10 +29,6 @@ void DeleteGameWindow(GameWindow *window);
 
 void RefreshGameWindow(GtkButton *button, gpointer user_data);
 
-void Call(GameWindow *window);
-
-void Raise(GameWindow *window);
-
-void Fold(GameWindow *window);
+void CardToFilePath(char *path, Card *card);
 
 #endif

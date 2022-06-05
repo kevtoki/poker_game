@@ -27,6 +27,7 @@ typedef struct {
 
 
 typedef struct {
+	int id;
 	int points;
 	int totalBetPoints;
 	PLAYERSTATE p_state;
@@ -47,6 +48,8 @@ typedef struct {
 	ClientPlayer *user;
 	int gameOver;
 	int idOfWinner;
+	int numberOfPlayers;
+	int activePlayers;
 	const char *connectionBuffer;
 
 	DECK *boardCards;

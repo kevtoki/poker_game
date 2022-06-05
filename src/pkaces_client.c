@@ -16,8 +16,9 @@ int main(int argc, char *argv[]){
 		return 0;
 	}
 
+	int portno = atoi(argv[2]);
 
-	ServerConnection *conn = CreateServerConnection(argv[1], atoi(argv[2]));
+	ServerConnection *conn = CreateServerConnection(argv[1], portno);
 
 	if (conn == NULL){
 		return 0;
@@ -26,6 +27,8 @@ int main(int argc, char *argv[]){
 	ClientGame *game = CreateClientGame();
 
 	CreateClientPlayer(game, conn);
+
+	game->user->id = portno - 10190;
 
 	GameWindow *window = CreateGameWindow(game);
 
