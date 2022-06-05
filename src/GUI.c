@@ -75,15 +75,15 @@ void DeleteGameWindow(GameWindow *window){
 	free(window);
 }
 
-
 void RefreshGameWindow(GtkButton *button, gpointer user_data){
+
 	GameWindow *gameWindow = user_data;
 
 	if (gameWindow->game->canRefresh != 1){
 		return;
 	}
 
-	/*
+	
 	char *path = (char *) malloc(1000);
 	
 	bzero(path, 1000);
@@ -92,15 +92,16 @@ void RefreshGameWindow(GtkButton *button, gpointer user_data){
 
 	CardToFilePath(path, gameWindow->game->user->card1);
 
-	gameWindow->playerCard1 = gtk_image_new_from_file(path);
+	gtk_image_set_from_file(GTK_IMAGE(gameWindow->playerCard1), path);
+
+	bzero(path,1000);
 
 	CardToFilePath(path, gameWindow->game->user->card2);
 
-	gameWindow->playerCard2 = gtk_image_new_from_file(path);
+	gtk_image_set_from_file(GTK_IMAGE(gameWindow->playerCard2), path);
 
 	free(path);
-
-	*/
+	
 	gtk_widget_show_all(gameWindow->windowGTK);
 
 	if (gameWindow->game->connectionBuffer[1] == 1){
