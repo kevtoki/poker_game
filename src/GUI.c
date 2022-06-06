@@ -266,7 +266,4 @@ void CardToFilePath(char *path, Card *card){
 	strcat(path, "_");
 	strcat(path, suitStr);
 	strcat(path, basePathEnd);
-
-
-	printf("%s\n", path);
 }

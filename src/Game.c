@@ -234,7 +234,7 @@ Player *EvaluateHands(Game *game){
 		entry = entry->Next;
 	}
 
-	return NULL;
+	return highest;
 }
 
 
