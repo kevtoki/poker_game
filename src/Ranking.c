@@ -3,15 +3,38 @@
 #include "Deck.h"
 #include "Player.h"
 
-int RankHand(Player *dealer, Player *player){
-	
-	return 0;
-}
+int RankHand(DECK *boardCards, Player *player){
+	DECK *playerDeck = player->deck;
+	if (RoyalFlush(boardCards, playerDeck)){
+		return 100;
+	}
+	if (StraightFlush(boardCards, playerDeck)){
+		return 95;
+	}
+	if (FourOfAKind(boardCards, playerDeck)){
+		return 90;
+	}
+	if (FullHouse(boardCards, playerDeck)){
+		return 85;
+	}
+	if (Flush(boardCards, playerDeck)){
+		return 80;
+	}
+	if (Straight(boardCards, playerDeck)){
+		return 75;
+	}
+	if (ThreeOfAKind(boardCards, playerDeck)){
+		return 70;
+	}
+	if (TwoPair(boardCards, playerDeck)){
+		return 65;
+	}
+	if (OnePair(boardCards, playerDeck)){
+		return 60;
+	}
 
 
-int HasCardGlobal(DECK *deck1, DECK *deck2){
-
-	return 0;
+	return HighCard(playerDeck);
 }
 
 
@@ -31,7 +54,7 @@ int RoyalFlush(DECK *deck1, DECK *deck2){
 		return 0;
 	}
 
-	if (frequencyListRank[8] && frequencyListRank[9] && frequencyListRank[10] &&frequencyListRank[11] && frequencyListRank[12]){
+	if (frequencyListRank[8] && frequencyListRank[9] && frequencyListRank[10] && frequencyListRank[11] && frequencyListRank[12]){
 		DeleteFrequencyList(frequencyListRank);
 		DeleteFrequencyList(frequencyListSuit);
 		return 1;
@@ -61,7 +84,7 @@ int StraightFlush(DECK *deck1, DECK *deck2){
 	}
 
 	for (int i = 0; i < 9; i++){
-		if (frequencyListRank[i] && frequencyListRank[i + 1] && frequencyListRank[i + 2] &&frequencyListRank[i + 3] && frequencyListRank[i + 4]){
+		if (frequencyListRank[i] && frequencyListRank[i + 1] && frequencyListRank[i + 2] && frequencyListRank[i + 3] && frequencyListRank[i + 4]){
 			DeleteFrequencyList(frequencyListRank);
 			DeleteFrequencyList(frequencyListSuit);
 			return 1;
@@ -125,7 +148,7 @@ int Straight(DECK *deck1, DECK *deck2){
 	int *frequencyListRank = GenerateFrequencyListRank(deck1, deck2);
 
 	for (int i = 0; i < 9; i++){
-		if (frequencyListRank[i] && frequencyListRank[i + 1] && frequencyListRank[i + 2] &&frequencyListRank[i + 3] && frequencyListRank[i + 4]){
+		if (frequencyListRank[i] && frequencyListRank[i + 1] && frequencyListRank[i + 2] && frequencyListRank[i + 3] && frequencyListRank[i + 4]){
 			DeleteFrequencyList(frequencyListRank);
 			return 1;
 		}
@@ -191,22 +214,12 @@ int OnePair(DECK *deck1, DECK *deck2){
 }
 
 
-int HighCard(DECK *deck1, DECK *deck2){
+int HighCard(DECK *deck1){
 	int highValue = 0;
 
 	DENTRY *entry = deck1->First;
 
 	for (int i = 0; i < deck1->Length; i++){
-		if (entry->Card->rank > highValue){
-			highValue = entry->Card->rank;
-		}
-
-		entry = entry->Next;
-	}
-
-	entry = deck2->First;
-
-	for (int i = 0; i < deck2->Length; i++){
 		if (entry->Card->rank > highValue){
 			highValue = entry->Card->rank;
 		}

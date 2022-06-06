@@ -27,25 +27,47 @@ GameWindow *CreateGameWindow(ClientGame *game){
 	window->table = gtk_table_new(3, 5, TRUE);
 	gtk_container_add(GTK_CONTAINER(window->windowGTK), window->table);
 
-	window->dealerCard1 = gtk_image_new_from_file("assets/images/back.jpg");
+	CardToFilePath(path, GetCard(game->boardCards, 0));
+
+	window->dealerCard1 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->dealerCard1, 0, 1, 0, 1);
 
-	window->dealerCard2 = gtk_image_new_from_file("assets/images/back.jpg");
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(game->boardCards, 1));
+
+	window->dealerCard2 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->dealerCard2, 1, 2, 0, 1);
 
-	window->dealerCard3 = gtk_image_new_from_file("assets/images/back.jpg");
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(game->boardCards, 2));
+
+	window->dealerCard3 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->dealerCard3, 2, 3, 0, 1);
 
-	window->dealerCard4 = gtk_image_new_from_file("assets/images/back.jpg");
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(game->boardCards, 3));
+
+	window->dealerCard4 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->dealerCard4, 3, 4, 0, 1);
 
-	window->dealerCard5 = gtk_image_new_from_file("assets/images/back.jpg");
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(game->boardCards, 4));
+
+	window->dealerCard5 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->dealerCard5, 4, 5, 0, 1);
+
+	bzero(path, 1000);
 
 	CardToFilePath(path, game->user->card1);
 
 	window->playerCard1 = gtk_image_new_from_file(path);
 	gtk_table_attach_defaults(GTK_TABLE(window->table), window->playerCard1, 1, 2, 1, 2);
+
+	bzero(path, 1000);
 
 	CardToFilePath(path, game->user->card2);
 
@@ -89,6 +111,36 @@ void RefreshGameWindow(GtkButton *button, gpointer user_data){
 	bzero(path, 1000);
 
 	HandlePacket(gameWindow->game, gameWindow->game->user, gameWindow->game->user->connection);
+
+	CardToFilePath(path, GetCard(gameWindow->game->boardCards, 0));
+
+	gtk_image_set_from_file(GTK_IMAGE(gameWindow->dealerCard1), path);
+
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(gameWindow->game->boardCards, 1));
+
+	gtk_image_set_from_file(GTK_IMAGE(gameWindow->dealerCard2), path);
+
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(gameWindow->game->boardCards, 2));
+
+	gtk_image_set_from_file(GTK_IMAGE(gameWindow->dealerCard3), path);
+
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(gameWindow->game->boardCards, 3));
+
+	gtk_image_set_from_file(GTK_IMAGE(gameWindow->dealerCard4), path);
+
+	bzero(path, 1000);
+
+	CardToFilePath(path, GetCard(gameWindow->game->boardCards, 4));
+
+	gtk_image_set_from_file(GTK_IMAGE(gameWindow->dealerCard5), path);
+	
+	bzero(path, 1000);
 
 	CardToFilePath(path, gameWindow->game->user->card1);
 
@@ -215,4 +267,6 @@ void CardToFilePath(char *path, Card *card){
 	strcat(path, suitStr);
 	strcat(path, basePathEnd);
 
+
+	printf("%s\n", path);
 }

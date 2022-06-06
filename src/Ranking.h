@@ -5,7 +5,7 @@
 #include "Deck.h"
 #include "Player.h"
 
-int RankHand(Player *dealer, Player *player);
+int RankHand(DECK *boardCards, Player *player);
 
 int RoyalFlush(DECK *deck1, DECK *deck2);
 
@@ -25,7 +25,7 @@ int TwoPair(DECK *deck1, DECK *deck2);
 
 int OnePair(DECK *deck1, DECK *deck2);
 
-int HighCard(DECK *deck1, DECK *deck2);
+int HighCard(DECK *deck1);
 
 int *GenerateFrequencyListSuit(DECK *deck1, DECK *deck2);
 

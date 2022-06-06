@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Deck.h"
 #include "Server.h"
+#include "Ranking.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -223,9 +224,15 @@ void GetUserInput(Game *game, Player *player){
 
 
 Player *EvaluateHands(Game *game){
+	PENTRY *entry = game->players->First;
+	Player *highest = game->players->First->Player;
+	for (int i = 0; i < game->players->Length; i++){
+		if (RankHand(game->boardCards, entry->Player) > RankHand(game->boardCards, highest)){
+			highest = entry->Player;
+		}
 
-
-
+		entry = entry->Next;
+	}
 
 	return NULL;
 }
