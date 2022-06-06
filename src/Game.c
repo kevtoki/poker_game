@@ -254,6 +254,9 @@ Player *LastManStanding(Game *game){
 		if (pEntry->Player->p_state == FOLDED){
 			playersIn--;
 		}
+		if (pEntry->Player->type == DEALER){
+            playersIn--;
+        }
 		else {
 			playerIn = pEntry->Player;
 		}
