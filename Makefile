@@ -96,6 +96,7 @@ obj_clean:
 	rm -f $(COMPILE_PATH)PlayerList.o
 	rm -f $(COMPILE_PATH)Server.o
 	rm -f $(COMPILE_PATH)Client.o
+	rm -f $(COMPILE_PATH)GUI.o
 	rm -f $(COMPILE_PATH)Ranking.o
 
 # Target for tar
