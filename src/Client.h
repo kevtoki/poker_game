@@ -35,7 +35,7 @@ typedef struct {
 	Card *card1;
 	Card *card2;	
 	ServerConnection *connection;
-	
+	char *username;	
 
 } ClientPlayer;
 

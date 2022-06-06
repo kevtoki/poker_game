@@ -4,7 +4,7 @@ GTKLIBS = `pkg-config --libs gtk+-2.0`
 
 
 # Variables
-VERSION = Beta
+VERSION = Final
 SOURCE_PATH = ./src/
 COMPILE_PATH = ./bin/
 COPTIONS = gcc -Wall -std=c11 $(GTKINC)
@@ -77,6 +77,11 @@ client: $(COMPILE_PATH)pkaces_client.o $(COMPILE_PATH)Client.o $(COMPILE_PATH)Ca
 ########## Other functions ################
 #Target to make both server and client
 all:
+	make server
+	make client
+
+#Target to make test
+test:
 	make server
 	make client
 

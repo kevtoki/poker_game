@@ -419,7 +419,7 @@ void DecodePacket(Game *game, Player *player, const char *msg){
 			BetPoints(game, player, betAmount);
 			break;
 
-		case 'b':
+		case 'r':
 			BetPoints(game, player, betAmount);
 			break;
 

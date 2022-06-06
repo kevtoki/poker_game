@@ -30,6 +30,15 @@ int main(int argc, char *argv[]){
 
 	game->user->id = portno - 10190;
 
+
+	char name[50];
+
+	printf("Please enter your username: ");
+
+	scanf("%s", name);
+
+	game->user->username = name;
+
 	GameWindow *window = CreateGameWindow(game);
 
 	gtk_main();

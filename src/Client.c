@@ -123,11 +123,12 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 	}
 
 	if (input == 2){
-		while (betAmount < (game->minimumBet - player->totalBetPoints) || betAmount > player->points){
+		do{
 			printf("\nHow much would you like to bet?\n");
 			printf("Enter amount here (%d - %d): ", game->minimumBet, player->points);
 			scanf("%d", &betAmount);
-		}
+		}while (betAmount < (game->minimumBet - player->totalBetPoints) || betAmount > player->points);
+		game->minimumBet = betAmount;
 	}
 
 	char inputChar;
@@ -139,6 +140,7 @@ void HandleUserInput(ClientGame *game, ClientPlayer *player){
 
 		case 2:
 			inputChar = 'r';
+			betAmount = game->minimumBet;
 			break;
 
 		case 3:
