@@ -118,6 +118,12 @@ void GameRound(Game *game){
 	DealCards(game);
 	DealCards(game);
 
+	// first round of betting
+	BroadcastPackets(game, 0, 0, 0);
+
+	ProcessUserActions(game);
+	
+	// the flop
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
@@ -133,6 +139,7 @@ void GameRound(Game *game){
 		return;
 	}
 
+	// the turn
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
 	BroadcastPackets(game, 0, 0, 0);
@@ -146,6 +153,7 @@ void GameRound(Game *game){
 		return;
 	}
 
+	// the river
 	TransferCard(game->Dealer->deck, game->boardCards, 0);
 
 	BroadcastPackets(game, 0, 0, 0);
