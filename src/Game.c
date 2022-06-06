@@ -372,6 +372,7 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 
 	int activePlayers = 0;
 
+	int temp = 0;
 	PENTRY *entry = game->players->First;
 	for (int i = 0; i < game->players->Length; i++){
 		if (entry->Player->p_state == PLAYING){
@@ -379,10 +380,12 @@ void SendPacket(Game *game, Player *player, int newRound, int needsInput, int ga
 		}
 
 		if (entry->Player != player){
-			msg[65 + (i * 3)] = entry->Player->id;
-			msg[66 + (i * 3)] = entry->Player->p_state;
-			msg[67 + (i * 3)] = entry->Player->points;
+			msg[65 + (temp * 3)] = entry->Player->id;
+			msg[66 + (temp * 3)] = entry->Player->p_state;
+			msg[67 + (temp * 3)] = entry->Player->points;
+			temp++;
 		}
+
 		entry = entry->Next;
 	}
 
