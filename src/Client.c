@@ -231,6 +231,7 @@ void DecodePacket(ClientGame *game, ClientPlayer *player, const char* msg){
 		player->card2 = CreateCard(msg[4], msg[5]);
 	}
 
+	bzero(game->playerData, 256);
 	game->playerData[0] = msg[64];
 
 	for (int i = 0; i < msg[64]; i++){
@@ -319,15 +320,15 @@ void PrintGameData(ClientGame *game){
 
 	printf("======== Player Info ========\n\n");
 	for (int i = 0; i < game->playerData[0]; i++){
-		printf("Player id: %d\n", game->playerData[1 + (i * 3)]);
-		if (game->playerData[2 + (i * 3)]){
+		printf("Player id: %d\n", game->connectionBuffer[65 + (i * 3)]);
+		if (game->connectionBuffer[66 + (i * 3)] == 0){
 			printf("	State: PLAYING\n");
 		}
 		else {
 			printf("	State: FOLDED\n");
 		}
 
-		printf("	Number of points: %d\n\n", game->playerData[3 + (i * 3)]);
+		printf("	Number of points: %d\n\n", game->connectionBuffer[67 + (i * 3)]);
 	}
 
 	printf("\n===========================\n\n");

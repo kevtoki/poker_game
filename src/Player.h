@@ -5,7 +5,7 @@
 
 typedef enum {PLAYER, DEALER} TYPE;
 
-typedef enum {PLAYING, FOLDED} P_STATE;
+typedef enum {PLAYING = 0, FOLDED = 1} P_STATE;
 
 
 typedef struct {
