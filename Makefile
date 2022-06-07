@@ -4,7 +4,7 @@ GTKLIBS = `pkg-config --libs gtk+-2.0`
 
 
 # Variables
-VERSION = Final
+VERSION = V1.0
 SOURCE_PATH = ./src/
 COMPILE_PATH = ./bin/
 COPTIONS = gcc -Wall -std=c11 $(GTKINC)
